@@ -1,11 +1,13 @@
-from create import *
-import os
+from AEF import *
 
 
+automate=Automate()
+
+ 
 #menu central
 def menu():
-    for i in range (10):
-        print("\n")  
+    
+    print("\n"*2) 
     print("----------------------------")
     print("Select an option :")
     print("1. Créer un automate")
@@ -18,101 +20,55 @@ def menu():
 
     option = input("Faire votre choix>> ")
     if option == "1":
-        create()
+        automate.create()
     elif option == "2":
-        modifier()
+        automate.modifier()
     elif option == "3":
-        supprimer()
+        automate.supprimer()
     elif option == "4":
         verif()
     elif option == "5":
         improve()
     elif option == "6":
         print("Goodbye !")
-        exit()
-    else:
-        print("Choix invalide. Choisir une option valide (1-6).")
-
-def fichierExistence():
-
-    csv_directory = os.path.expanduser("csv")
-
-    # On va demander à l'utilisateur de choisir son fichier :
-
-    # Vérifier si le répertoire existe
-    if os.path.exists(csv_directory):
-        print("Voici les fichiers déjà existants : ")
-    
-    # La fonction os.listdir permet d'obtenir la liste des fichiers dans le répertoire en question sur linux et windows
-    files = os.listdir(csv_directory)
-    
-    # Afficher tous les fichiers
-    for file in files:
-        print(file) 
-
-def modifier():
-    for i in range(10):
-        print("\n")
-
-    fichierExistence()  
-
-    file_name = input("Entrez le nom du fichier CSV à modifier : ")
-    csv_folder = "csv"
-    csv_file_path = os.path.join(csv_folder, file_name)
-
-    while not os.path.exists(csv_file_path):
-
-        print("\n\033[91mLe fichier n'existe pas. Veuillez choisir un fichier existant.\033[0m")
-        file_name = input("Entrez le nom du fichier CSV à modifier : ")
-        csv_folder = "csv"
-        csv_file_path = os.path.join(csv_folder, file_name)
-        
-        if os.path.exists(csv_file_path):
-            exit
-    
-    print("~~~~~~~~~~~~~~~~~~~~~~~")
-    print("1. Modifier les états")
-    print("2. Supprimer des transitions")
-    print("3. Ajouter des transitions")
-    print("4. Terminé")
-    print("~~~~~~~~~~~~~~~~~~~~~~~")
-
-    option = input ("Faire votre choix >> ")
-
-    if option == "1":
-        modification(csv_file_path)
-    elif option == "2":
-        delete()
-    elif option == "3":
-        add()
-    elif option == "4":
-        menu()
         exit
     else:
-        print("Choix invalide. Choisir une option valide")
+        print("Choix invalide. Choisir une option valide (1-6).")
+    menu()
+        
 
-# menu pour acceder a toutes les verifications 
+# menu pour acceder a toutes les verifications
 def verif():
-    for i in range (10):
-        print("\n")
+    print("\n"*10)
+        
     print("#######################")
     print("Select an option de vérification :")
     print("1. Si un mot est reconnu")
-    print("2. Si un AEF est deterministe")
-    print("3. Si un AEF est complet")
-    print("4. Si un AEF est unitaire")
-    print("5. Si un AEF est equivalent")
-    print("6. Retours")
+    print("2. Si un automate est complet")
+    print("3. Si un automate est deterministe")
+    print("4. Si tous les cycles sont unitaires")
+    print("5. L'equivalence entre 2 automates")
+    print("6. Retour")
+    print("########################")
 
-
-    print("#######################")
     option = input("Faire votre choix>> ")
     if option == "1":
         mot(automate, mot)
     elif option == "2":
-        complet(csv_file_path)
+        nomCsv=input("Entrez le nom du CSV à importer: ")
+        automate.importCSV(nomCsv)
+        if(automate.complet()):
+            print("L'automate est complet ")
+        else:
+            print("L'automate n'est pas complet")
+        
     elif option == "3":
-        deterministe()
+        nomCsv=input("Entrez le nom du CSV à importer: ")
+        automate.importCSV(nomCsv)
+        if(automate.estDeterministe()):
+            print("L'automate est déterministe ")
+        else:
+            print("L'automate n'est pas déterministe !")
     elif option == "4":
         unitaire()
     elif option == "5":
@@ -125,8 +81,8 @@ def verif():
 
 #menu pour acceder aux améliorations possibles
 def improve():
-    for i in range (10):
-        print("\n")
+
+    print("\n"*10)
 
     print("|||||||||||||||||||||||||||")
     print("Select an option pour améliorer l'AEF :")
@@ -147,6 +103,10 @@ def improve():
     elif option == "4":
         minimal()
     elif option == "5":
-        menu()
+        exit()
     else:
         print("Choix invalide. Choisir une option valide (1-5).")
+        
+    
+
+
