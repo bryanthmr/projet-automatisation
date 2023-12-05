@@ -410,7 +410,87 @@ class Automate:
         return True
 
 
+    def deterministe(self):
+        mat_trans={}
+        lst={}
+        new_transition=[]
+        etats=set()
+        
+        
+        
+        for transition in self.transition:
+            transition2=transition.copy()
+            transition2[0]={transition2[0]}
+            transition2[1]={transition2[1]}
+            etats.update(transition2[0])
+            etats.update(transition2[1])
+           
+            
+       
+        
+        for etat in etats:
+            
+            mat_trans[etat]={}
+            
 
+
+        
+        for transition in self.transition:
+            etat1=transition[0]
+            etat2=transition[1]
+            car=transition[2]
+            
+            if(mat_trans[etat1].get(car,"nothing")!="nothing"):
+                etat2={etat2}
+                mat_trans[etat1][car].update(etat2)
+            else:
+                mat_trans[etat1][car]={etat2}
+
+        
+
+        i=0
+        lst[f'S{i}']={self.initial}
+        i+=1
+        car=set()
+        for elt in mat_trans:
+            for char in mat_trans[elt]:
+                car.update({char})
+                mat_copie=mat_trans[elt][char].copy()
+                for etat in mat_trans[elt][char]:
+                    if(mat_trans[etat].get(char,"nothing")!="nothing"):        
+                        mat_copie.update(mat_trans[etat][char])
+                    
+                
+                
+                if(mat_copie not in lst.values()):
+                    lst[f'S{i}']=mat_copie
+                    etat1=lst[f'S{i}']
+                    i+=1 
+                
+        
+        r=set()
+        l=0
+        for e in lst:
+            for u in car:
+                for k in lst[e]:
+                    if(mat_trans[k].get(u,"nothing")!="nothing"):
+                        r.update(mat_trans[k][u])     
+                    
+                if(r!=set()):
+                    key=[k for (k,v) in lst.items() if v==r]
+                    etat1=key[0]
+                    new_transition.append([e,etat1,u])
+                    r=set()
+                    l=0
+        
+              
+                                      
+        self.transition=new_transition
+        print(self.transition)
+        self.estDeterministe()             
+                    
+            
+            
 """
     if not os.path.exists(csv_file_path):  # Vérifier si le fichier existe
         print("\n\033[91mLe fichier n'existe pas. Veuillez choisir un fichier existant.\033[0m")

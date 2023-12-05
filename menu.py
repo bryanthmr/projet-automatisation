@@ -97,7 +97,10 @@ def improve():
     if option == "1":
         AEF_complet()
     elif option == "2":
-        AEF_deterministe()
+        nomCsv=input("Entrez le nom du CSV à importer: ")
+        automate.importCSV(nomCsv)
+        automate.deterministe()
+        
     elif option == "3":
         emonde()
     elif option == "4":
