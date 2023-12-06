@@ -37,6 +37,7 @@ class Automate:
         file=open(f'csv/{filename}','r')
         reader=csv.reader(file,delimiter=",")
         i=0
+        self.transition=[]
         for row in reader:
             i+=1
             
@@ -420,74 +421,65 @@ class Automate:
         
         for transition in self.transition:
             transition2=transition.copy()
-            transition2[0]={transition2[0]}
-            transition2[1]={transition2[1]}
-            etats.update(transition2[0])
-            etats.update(transition2[1])
+            etats.update({transition2[0]})
+            etats.update({transition2[1]})
            
-            
-       
+
         
         for etat in etats:
             
             mat_trans[etat]={}
             
-
-
-        
+        symbole=set()
         for transition in self.transition:
             etat1=transition[0]
             etat2=transition[1]
             car=transition[2]
-            
+            symbole.update({car})
             if(mat_trans[etat1].get(car,"nothing")!="nothing"):
                 etat2={etat2}
                 mat_trans[etat1][car].update(etat2)
             else:
                 mat_trans[etat1][car]={etat2}
 
-        
 
         i=0
         lst[f'S{i}']={self.initial}
         i+=1
-        car=set()
-        for elt in mat_trans:
-            for char in mat_trans[elt]:
-                car.update({char})
-                mat_copie=mat_trans[elt][char].copy()
-                for etat in mat_trans[elt][char]:
-                    if(mat_trans[etat].get(char,"nothing")!="nothing"):        
-                        mat_copie.update(mat_trans[etat][char])
-                    
-                
-                
-                if(mat_copie not in lst.values()):
-                    lst[f'S{i}']=mat_copie
-                    etat1=lst[f'S{i}']
-                    i+=1 
-                
-        
+       
         r=set()
-        l=0
-        for e in lst:
-            for u in car:
-                for k in lst[e]:
-                    if(mat_trans[k].get(u,"nothing")!="nothing"):
-                        r.update(mat_trans[k][u])     
+        fini=False
+        lst_copie=lst.copy()
+        etat_fait=[]
+        etat_finaux=[]
+    
+        while len(etat_fait)!=len(lst_copie):
+            lst=lst_copie.copy()
+            for elt in lst.keys():
+                if(elt not in etat_fait):
                     
-                if(r!=set()):
-                    key=[k for (k,v) in lst.items() if v==r]
-                    etat1=key[0]
-                    new_transition.append([e,etat1,u])
-                    r=set()
-                    l=0
-        
-              
-                                      
+                    etat_fait.append(elt)
+                    for char in symbole:
+                        for etat in lst[elt]:
+                            if(char in mat_trans[etat].keys()):
+                                r.update(mat_trans[etat][char])
+                        if(r!=set()):                
+                            if (r not in lst_copie.values()):
+                                lst_copie[f'S{i}']=r
+                                new_transition.append([elt,f'S{i}',char])
+                                i+=1
+                                
+                                r=set()
+                            else:
+                                key=[k for (k,v) in lst_copie.items() if v==r]
+                                etat1=key[0]
+                                new_transition.append([elt,etat1,char])
+                                r=set()
+                              
         self.transition=new_transition
         print(self.transition)
-        self.estDeterministe()             
+        
+        #self.estDeterministe()             
                     
             
             

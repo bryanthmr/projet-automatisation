@@ -1,0 +1,16 @@
+État Initial ,q0
+État Final ,"q1,q3"
+
+Premier etat,Deuxieme etat,Entrée
+S0,S1,a
+S0,S2,b
+S1,S3,a
+S1,S2,b
+S2,S4,b
+S3,S3,a
+S3,S2,b
+S4,S3,a
+S4,S2,b
+q0,q1,a
+q0,q2,b
+q1,q3,a
