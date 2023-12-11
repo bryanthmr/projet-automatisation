@@ -2,11 +2,15 @@
 État Final ,q3
 
 Premier etat,Deuxieme etat,Entrée
-q0,q1,a
-q0,q2,b
-q1,q0,a
-q1,q2,b
-q1,q3,b
-q2,q0,a
-q2,q2,b
-q3,q2,a
+S0,S1,a
+S0,S2,b
+S1,S0,a
+S1,S3,b
+S2,S0,a
+S2,S2,b
+S3,S4,a
+S3,S2,b
+S4,S5,a
+S4,S2,b
+S5,S5,a
+S5,S3,b

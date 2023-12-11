@@ -1,4 +1,5 @@
 from AEF import *
+import csv
 
 
 automate=Automate()
@@ -39,7 +40,7 @@ def menu():
 
 # menu pour acceder a toutes les verifications
 def verif():
-    print("\n"*10)
+    print("\n"*5)
         
     print("#######################")
     print("Select an option de vérification :")
@@ -82,7 +83,7 @@ def verif():
 #menu pour acceder aux améliorations possibles
 def improve():
 
-    print("\n"*10)
+    print("\n"*5)
 
     print("|||||||||||||||||||||||||||")
     print("Select an option pour améliorer l'AEF :")
@@ -100,7 +101,19 @@ def improve():
         nomCsv=input("Entrez le nom du CSV à importer: ")
         automate.importCSV(nomCsv)
         automate.deterministe()
-        
+        with open("csv/"+nomCsv, mode='w', newline='') as file:
+            writer = csv.writer(file)
+                
+            # Écrire les données dans le fichier CSV
+            writer.writerow(['État Initial ', automate.initial])
+            final= " ".join(automate.final)
+            writer.writerow(['État Final ', final])
+            writer.writerow([])
+            writer.writerow(['Premier etat', 'Deuxieme etat', 'Entrée'])
+            for transition in automate.transition:
+                writer.writerow(transition)   
+            print("\n")
+            print(f"Les données ont été enregistrées dans le fichier {nomCsv}.")
     elif option == "3":
         emonde()
     elif option == "4":

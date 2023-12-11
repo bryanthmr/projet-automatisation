@@ -26,7 +26,7 @@ class Automate:
     
     def __init__(self):
         self.initial=""
-        self.final=""
+        self.final=[]
         self.transition=[]
         
         
@@ -46,7 +46,7 @@ class Automate:
                     self.initial=row[1]
                     
                 case 2:
-                    self.final=row[1]
+                    self.final=row[1].split(" ")
                     
                 case 3:
                     next(reader)
@@ -84,7 +84,7 @@ class Automate:
                 print("\033[91mErreur : Un automate à état fini possède un seul état initial mais peut avoir plusieurs états finaux.\033[0m\n")
                 return
 
-            self.final = input("Entrez l'état final de l'automate : ")
+            self.final = input("Entrez l'état final de l'automate (si plusieurs états finaux séparez les avec un espace) : ")
 
             # Demander à l'utilisateur de saisir les transitions sous forme de matrice
             print("\nEntrez les transitions de votre automate sous forme de matrice (séparez les éléments par des espaces) :")
@@ -312,64 +312,44 @@ class Automate:
 
 
 
-
     def estDeterministe(self):
-        transitions = {}
-        etats = []
-        alphabet = []
-        etat_initial = None
-        """
-        # Lire le fichier CSV
-        with open(automate_csv, 'r') as csv_file:
-            csv_reader = csv.reader(csv_file)
+        etats=set()
+        symbole=set()
+        mat_trans={}
+        for transition in self.transition:
+            transition2=transition.copy()
+            etats.update({transition2[0]})
+            etats.update({transition2[1]})
+           
 
-        # Ignorer les quatre premières lignes
-        for _ in range(4):
-            next(csv_reader)
-"""
-        # Parcourir les lignes du fichier CSV à partir de la ligne 5
-        for trans in self.transition:
-            premier_etat = trans[0]
-            deuxieme_etat = trans[1]
-            entree = trans[2]
-
-            # Ajouter les états à la liste des états (sans doublons)
-            if premier_etat not in etats:
-                etats.append(premier_etat)
-            if deuxieme_etat not in etats:
-                etats.append(deuxieme_etat)
-
-            # Ajouter le symbole d'entrée à la liste de l'alphabet (sans doublons)
-            if entree not in alphabet:
-                alphabet.append(entree)
-
-            """
-            inutile je pense 
-            # Si c'est la première transition, définir l'état initial
-            if self.initial is None:
-                 self.initial = premier_etat
-            """
-            # Vérifier si une transition pour cet état et ce symbole existe déjà
-            if premier_etat in transitions and entree in transitions[premier_etat]:
-                print(f"Transition redondante : {premier_etat} --{entree}--> {transitions[premier_etat][entree]}")
-                return False  # Automate non déterministe
-
-            # Ajouter la transition à la liste des transitions
-            if premier_etat not in transitions:
-                transitions[premier_etat] = {}
-                transitions[premier_etat][entree] = deuxieme_etat
-
-            # Vérifier si chaque état a une transition pour chaque symbole de l'alphabet
-            for etat in etats:
-                if etat not in transitions:
-                    print(f"État sans transition : {etat}")
-                    return False
-
-        # Vérifier si l'état initial et l'état final sont bien définis
+        
+        for etat in etats:
+            mat_trans[etat]={}
+        
+        for transition in self.transition:
+            etat1=transition[0]
+            etat2=transition[1]
+            car=transition[2]
+            symbole.update({car})
+            if(mat_trans[etat1].get(car,"nothing")!="nothing"):
+                mat_trans[etat1][car].update({etat2})
+            else:
+                mat_trans[etat1][car]={etat2}
+        
+        verif=True
+        for elt in mat_trans:
+            for s in symbole:
+                if(mat_trans[elt].get(car,"nothing")!="nothing"):
+                    if(len(mat_trans[elt][car])>1):
+                        verif=False
+                        #print(f"L'automate n'est pas déterministe : {elt} -> {mat_trans[elt][car]} : {car} ")
+                        break
 
 
-        return True
-    
+        
+        return verif
+
+
     
     def complet(self):
         transitions = {}
@@ -427,7 +407,6 @@ class Automate:
 
         
         for etat in etats:
-            
             mat_trans[etat]={}
             
         symbole=set()
@@ -437,8 +416,7 @@ class Automate:
             car=transition[2]
             symbole.update({car})
             if(mat_trans[etat1].get(car,"nothing")!="nothing"):
-                etat2={etat2}
-                mat_trans[etat1][car].update(etat2)
+                mat_trans[etat1][car].update({etat2})
             else:
                 mat_trans[etat1][car]={etat2}
 
@@ -448,10 +426,10 @@ class Automate:
         i+=1
        
         r=set()
-        fini=False
+
         lst_copie=lst.copy()
         etat_fait=[]
-        etat_finaux=[]
+        etat_finaux=set()
     
         while len(etat_fait)!=len(lst_copie):
             lst=lst_copie.copy()
@@ -477,22 +455,22 @@ class Automate:
                                 r=set()
                               
         self.transition=new_transition
-        print(self.transition)
         
-        #self.estDeterministe()             
-                    
+        for elt in lst:
+            for final in self.final:
+                if final in lst[elt]:
+                    etat_finaux.update({elt})
+            
+        self.final=list(etat_finaux)
+        
+        self.initial="S0"
+        
+        self.estDeterministe()           
+                      
             
             
+
 """
-    if not os.path.exists(csv_file_path):  # Vérifier si le fichier existe
-        print("\n\033[91mLe fichier n'existe pas. Veuillez choisir un fichier existant.\033[0m")
-    else:
-        if deterministe(csv_file_path):
-            print("L'automate est déterministe.")
-        else:
-            print("L'automate n'est pas déterministe.")
-
-
   
     deterministe:
     Il possède un unique état initial.
