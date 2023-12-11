@@ -33,8 +33,9 @@ rajouter en plus dans le code
 Réalisé les opérations suivantes :
     [] complement d'un AEF 
     [] miroir d'un AEF
-    [] produit de deux AEF                            Soit un automate A et un automate B, les etats finaux de A deviennent états normaux et se relient à l'etat initial de B qui devient lui même un état normal
-    [] concatenation de deux AEF                      Soit un automate A et un automate B, et soit q1---a--->q2 et q1'--a--->q2' alors la concatenation donne q1q1'--a-->q2q2'
+    [] produit de deux AEF                           Soit un automate A et un automate B, et soit q1---a--->q2 et q1'--a--->q2' alors la concatenation donne q1q1'--a-->q2q2' 
+    [] concatenation de deux AEF                     Soit un automate A et un automate B, les etats finaux de A deviennent états normaux et se relient à l'etat initial de B qui devient lui même                                                      un état normal
+
 
 Extraire une expression régulière 
 trouver le langage
