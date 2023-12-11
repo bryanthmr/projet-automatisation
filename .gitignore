@@ -1,2 +1,2 @@
-csv
-_pycache_
+csv/*
+_pycache_/*

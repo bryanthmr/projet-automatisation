@@ -465,7 +465,18 @@ class Automate:
         
         self.initial="S0"
         
-        self.estDeterministe()           
+        
+    def complement(self):
+        new_final=set()
+        for transition in self.transition:
+            t1=transition[0]
+            t2=transition[1]
+            if t1 not in self.final:
+                new_final.update({t1})
+            if t2 not in self.final:
+                new_final.update({t2})
+        
+        self.final=list(new_final)
                       
             
             
@@ -484,6 +495,6 @@ class Automate:
     emondé:
     Un automate est dit émondé (ou utile) si tous les états de cet automate peuvent former au moins un mot du langage.
     Par exemple : Cet automate est fini émondé. q0, q1 et q3 peuvent servir tous les 3 à la création du langage.
-    """
+"""
     
     
