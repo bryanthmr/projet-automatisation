@@ -478,8 +478,32 @@ class Automate:
         
         self.final=list(new_final)
                       
+    
+    def miroir(self):
+        new_transition=[]
+
+        
+        for transition in self.transition:
+            new_transition.append([transition[1],transition[0],transition[2]])
+        
+        self.transition=new_transition
+
+        if(len(self.final)>1):
+            for t in self.transition:
+                if(t[0] in self.final):
+                    self.transition.append(["S0'",t[1],t[2]])
+            self.final=[self.initial]
+            self.initial="S0'"
+        else:
+            final=self.final[0]
+            self.final=[self.initial]
+            self.initial=final
             
-            
+
+        
+    
+
+        
 
 """
   
@@ -496,5 +520,3 @@ class Automate:
     Un automate est dit émondé (ou utile) si tous les états de cet automate peuvent former au moins un mot du langage.
     Par exemple : Cet automate est fini émondé. q0, q1 et q3 peuvent servir tous les 3 à la création du langage.
 """
-    
-    

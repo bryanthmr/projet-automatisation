@@ -164,7 +164,23 @@ def operation():
                 print(f"Les données ont été enregistrées dans le fichier {nomCsv}.")
             print("Complément de l'AEF terminé")
         case 2:
+            nomCsv=input("Entrez le nom du CSV à importer: ")
+            automate.importCSV(nomCsv)
             automate.miroir()
+            with open("csv/"+nomCsv, mode='w', newline='') as file:
+                writer = csv.writer(file)
+                    
+                # Écrire les données dans le fichier CSV
+                writer.writerow(['État Initial ', automate.initial])
+                final= " ".join(automate.final)
+                writer.writerow(['État Final ', final])
+                writer.writerow([])
+                writer.writerow(['Premier etat', 'Deuxieme etat', 'Entrée'])
+                for transition in automate.transition:
+                    writer.writerow(transition)   
+                print("\n")
+                print(f"Les données ont été enregistrées dans le fichier {nomCsv}.")
+            print("miroir de l'AEF terminé")
         case 3:
             automate.produit()
         case 4:
