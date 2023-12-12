@@ -1,7 +1,16 @@
-État Initial ,q0
-État Final ,q3
+ï¿½tat Initial ,q0
+ï¿½tat Final ,q1
 
-Premier etat,Deuxieme etat,Entrée
-q0,q1,a
-q1,q2,b
-q2,q3,c
+Premier etat,Deuxieme etat,Entree
+q0,q0,a
+q1,q1,c
+q0,q1,b
+q3,q5,d
+q0,puit1,c
+q0,puit1,d
+q3,puit4,a
+q1,puit2,b
+q1,puit2,d
+q3,puit4,c
+q3,puit4,b
+q1,puit2,a

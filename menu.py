@@ -57,7 +57,7 @@ def verif():
     elif option == "2":
         nomCsv=input("Entrez le nom du CSV à importer: ")
         automate.importCSV(nomCsv)
-        if(automate.complet()):
+        if(automate.complet(nomCsv)):
             print("L'automate est complet ")
         else:
             print("L'automate n'est pas complet")
@@ -95,7 +95,10 @@ def improve():
 
     option = input("Faire botre choix>> ")
     if option == "1":
-        AEF_complet()
+        nomCsv=input("Entrez le nom du CSV à importer: ")
+        automate.importCSV(nomCsv)
+        automate.rendre_complet(nomCsv)
+        print("L'automate est désormais complet.")
     elif option == "2":
         AEF_deterministe()
     elif option == "3":

@@ -1,6 +1,0 @@
-État Initial ,q0
-État Final ,q2
-
-Premier etat,Deuxieme etat,Entrée
-q0,q1,a
-q1,q2,b

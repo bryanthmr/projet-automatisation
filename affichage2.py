@@ -44,5 +44,5 @@ def afficher_automate(csv_file):
     plt.show()
 
 # Utilisation du code
-csv_file_path = 'csv/nondet'  # Remplacez par le chemin de votre fichier CSV
+csv_file_path = 'csv/test6.csv'  # Remplacez par le chemin de votre fichier CSV
 afficher_automate(csv_file_path)
