@@ -500,8 +500,30 @@ class Automate:
             self.initial=final
             
 
+    def __add__(self,automate2):
+        initial=self.initial
+        final=automate2.final
         
-    
+        transition=[]
+        
+        for t in self.transition:
+            transition.append(t)
+
+        for f in self.final:
+            for t in automate2.transition:
+                if(t[0] == automate2.initial):
+                    transition.append([f,t[1],t[2]])
+        
+        for t in automate2.transition:
+            transition.append(t)
+        
+        
+        
+        automate3=Automate()
+        automate3.initial=initial
+        automate3.final=final
+        automate3.transition=transition
+        return automate3
 
         
 

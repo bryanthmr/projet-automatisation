@@ -1,7 +1,7 @@
-État Initial ,q3
-État Final ,q0
+ï¿½tat Initial ,S0
+ï¿½tat Final ,S5
 
-Premier etat,Deuxieme etat,Entrée
+Premier etat,Deuxieme etat,Entrï¿½e
 S1,S0,a
 S2,S0,b
 S0,S1,a

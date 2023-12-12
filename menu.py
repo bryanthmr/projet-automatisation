@@ -147,9 +147,10 @@ def operation():
     match(int(option)):
         case 1:
             nomCsv=input("Entrez le nom du CSV à importer: ")
+            sortie=input("Entrez le nom du CSV pour stocker le complémentaire: ")
             automate.importCSV(nomCsv)
             automate.complement()
-            with open("csv/"+nomCsv, mode='w', newline='') as file:
+            with open("csv/"+sortie, mode='w', newline='') as file:
                 writer = csv.writer(file)
                     
                 # Écrire les données dans le fichier CSV
@@ -161,13 +162,14 @@ def operation():
                 for transition in automate.transition:
                     writer.writerow(transition)   
                 print("\n")
-                print(f"Les données ont été enregistrées dans le fichier {nomCsv}.")
+                print(f"Les données ont été enregistrées dans le fichier {sortie}.")
             print("Complément de l'AEF terminé")
         case 2:
             nomCsv=input("Entrez le nom du CSV à importer: ")
+            sortie=input("Entrez le nom du CSV pour stocker le miroir: ")
             automate.importCSV(nomCsv)
             automate.miroir()
-            with open("csv/"+nomCsv, mode='w', newline='') as file:
+            with open("csv/"+sortie, mode='w', newline='') as file:
                 writer = csv.writer(file)
                     
                 # Écrire les données dans le fichier CSV
@@ -179,12 +181,38 @@ def operation():
                 for transition in automate.transition:
                     writer.writerow(transition)   
                 print("\n")
-                print(f"Les données ont été enregistrées dans le fichier {nomCsv}.")
+                print(f"Les données ont été enregistrées dans le fichier {sortie}.")
             print("miroir de l'AEF terminé")
         case 3:
             automate.produit()
         case 4:
-            automate.concatenation()
+            automate2=Automate()
+            automate3=Automate()
+            nomCsv1=input("Entrez le nom du CSV de l'automate 1 à importer: ")
+            nomCsv2=input("Entrez le nom du CSV de l'automate 2 à importer: ")
+            sortie=input("Entrez le nom du CSV pour stocker la concaténation: ")
+        
+            automate3.importCSV(nomCsv1)
+            automate2.importCSV(nomCsv2)
+            
+            
+            automate=automate3+automate2
+            
+            
+            with open("csv/"+sortie, mode='w', newline='') as file:
+                writer = csv.writer(file)
+                    
+                # Écrire les données dans le fichier CSV
+                writer.writerow(['État Initial ', automate.initial])
+                final= " ".join(automate.final)
+                writer.writerow(['État Final ', final])
+                writer.writerow([])
+                writer.writerow(['Premier etat', 'Deuxieme etat', 'Entrée'])
+                for transition in automate.transition:
+                    writer.writerow(transition)   
+                print("\n")
+                print(f"Les données ont été enregistrées dans le fichier {sortie}.")
+            print("concaténation de l'AEF terminé")
         case 5:
             menu()
         case _:
