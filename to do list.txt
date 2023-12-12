@@ -15,14 +15,14 @@ l'utilisateur a la possibilité de choisir sa ligne a supprimer et sa ligne pour
       [X] Afficher la liste des fichiers existants
 
   --> verifier : 
-      [] si un mot est reconnu   -> fait (wordverif.py) mais à integré au code
-      [] si un automate est complet  -> fait mais à améliorer
-      [] si un automate est deterministe   ->fait mais à améliorer                  importcsv() problème chemin de fichier
+      [X] si un mot est reconnu   -> fait (wordverif.py) mais à integré au code
+      [X] si un automate est complet  -> fait mais à améliorer
+      [X] si un automate est deterministe   ->fait mais à améliorer                  importcsv() problème chemin de fichier
       [] si deux automates sont equivalents 
 
 --> Amelioration : 
-      [] Rendre un automate complet
-      [] Rendre un automate deterministe
+      [X] Rendre un automate complet
+      [X] Rendre un automate deterministe
       [] Rendre un automate émondé
       [] Rendre un automate minimal
     
@@ -31,10 +31,10 @@ reboucler le menu
 
 rajouter en plus dans le code
 Réalisé les opérations suivantes :
-    [] complement d'un AEF 
-    [] miroir d'un AEF
+    [X] complement d'un AEF 
+    [X] miroir d'un AEF
     [] produit de deux AEF                           Soit un automate A et un automate B, et soit q1---a--->q2 et q1'--a--->q2' alors la concatenation donne q1q1'--a-->q2q2' 
-    [] concatenation de deux AEF                     Soit un automate A et un automate B, les etats finaux de A deviennent états normaux et se relient à l'etat initial de B qui devient lui même                                                      un état normal
+    [X] concatenation de deux AEF                     Soit un automate A et un automate B, les etats finaux de A deviennent états normaux et se relient à l'etat initial de B qui devient lui même                                                      un état normal
 
 
 Extraire une expression régulière 
