@@ -30,9 +30,9 @@ def afficher_automate(csv_file):
     initial_states = [node for node, data in G.nodes(data=True) if 'initial' in data and data['initial']]
     final_states = [node for node, data in G.nodes(data=True) if 'final' in data and data['final']]
 
-    nx.draw_networkx_nodes(G, pos, node_size=1000, node_color="skyblue", nodelist=initial_states)
-    nx.draw_networkx_nodes(G, pos, node_size=1000, node_color="salmon", nodelist=final_states)
-    nx.draw_networkx_nodes(G, pos, node_size=500, node_color="lightgray", nodelist=set(G.nodes) - set(initial_states + final_states))
+    nx.draw_networkx_nodes(G, pos, node_size=1000, nodelist=initial_states)
+    nx.draw_networkx_nodes(G, pos, node_size=1000, nodelist=final_states)
+    nx.draw_networkx_nodes(G, pos, node_size=500, nodelist=set(G.nodes) - set(initial_states + final_states))
     
     nx.draw_networkx_edges(G, pos)
     nx.draw_networkx_labels(G, pos)
