@@ -19,7 +19,8 @@ def menu():
     print("\033[38;5;120m|\033[0m 4. ~Verification                           \033[38;5;120m|\033[0m")
     print("\033[38;5;120m|\033[0m 5. ~Improvement                            \033[38;5;120m|\033[0m")
     print("\033[38;5;120m|\033[0m 6. ~Operation                              \033[38;5;120m|\033[0m")
-    print("\033[38;5;120m|\033[0m 7. ~Exit                                   \033[38;5;120m|\033[0m")
+    print("\033[38;5;120m|\033[0m 7. ~Display                                \033[38;5;120m|\033[0m")
+    print("\033[38;5;120m|\033[0m 8. ~Exit                                   \033[38;5;120m|\033[0m")
     print("\033[38;5;120m└============================================┘\033[0m")
 
 
@@ -29,17 +30,23 @@ def menu():
             print("\nWelcome in Creation!\n")
             automate.create()
         case 2:
+            print("\nWelcome in Modification!\n")
             automate.modifier()
         case 3:
             print("\nWelcome in Deletion!")
             automate.supprimer()
         case 4:
+            print("\nWelcome in Verification!")
             verif()
         case 5:
+            print("\nWelcome in Improvement!")
             improve()
         case 6:
+            print("\nWelcome in Operation!")
             operation()
         case 7:
+            automate.affichage()
+        case 8:
             print("Goodbye !")
             exit(0)
         case _:
@@ -52,34 +59,34 @@ def verif():
     print("\n"*5)
         
     print("----------------------------------------------------------")
-    print("        Sélectionne une option de vérification :")
-    print("1. Si un mot est reconnu")
-    print("2. Si un automate est complet")
-    print("3. Si un automate est deterministe")
-    print("4. Si tous les cycles sont unitaires")
-    print("5. L'equivalence entre 2 automates")
-    print("6. Retour")
-    print("---------------------------------------------------------")
+    print("                    Select an option :            ")
+    print("1. If a word is recognized")
+    print("2. If an automaton is complete")
+    print("3. If an automaton is deterministic")
+    print("4. If all cycles are unitary")
+    print("5. If two automata are equivalent")
+    print("6. Return")
+    print("----------------------------------------------------------")
 
-    option = input("Faites votre choix>> ")
+    option = input("Select a number >> ")
     match(int(option)):
         case 1:
             mot(automate, mot)
         case 2:
-            nomCsv=input("Entrez le nom du CSV à importer: ")
+            nomCsv=input("Enter the name of the file you want to import: ")
             automate.importCSV(nomCsv)
-            if(automate.complet()):
-                print("L'automate est complet ")
+            if(automate.estComplet()):
+                print("This is a complete automaton.")
             else:
-                print("L'automate n'est pas complet")
+                print("This is not a complete automaton.")
         
         case 3:
-            nomCsv=input("Entrez le nom du CSV à importer: ")
+            nomCsv=input("EEnter the name of the file you want to import: ")
             automate.importCSV(nomCsv)
             if(automate.estDeterministe()):
-                print("L'automate est déterministe ")
+                print("This is a deterministic automaton.")
             else:
-                print("L'automate n'est pas déterministe !")
+                print("This is not a deterministic automaton.")
         case 4:
             automate.unitaire()
         case 5:
@@ -87,7 +94,7 @@ def verif():
         case 6:
             menu()       
         case _:
-            print("Choix invalide. Choisir une option valide (1-6).")
+            print("Invalid choice. Choose a valid option (1-6).")
 
 #menu pour acceder aux améliorations possibles
 def improve():
@@ -95,12 +102,12 @@ def improve():
     print("\n"*5)
 
     print("************************************************************")
-    print("Sélectionne une option pour améliorer l'AEF :")
-    print("1. Rendre un automate complet")
-    print("2. Rendre un automate deterministe")
-    print("3. Rendre un automate émondé")
-    print("4. Rendre un automate minimal")
-    print("5. Retour")
+    print("                    Select an option :            ")
+    print("1. Make a complet automaton")
+    print("2. Make a deterministic automaton")
+    print("3. Make a pruned automaton")
+    print("4. Make a minimal automaton")
+    print("5. Return")
     print("************************************************************")
 
     option = input("Faites votre choix>> ")
@@ -108,23 +115,23 @@ def improve():
         case 1:
             AEF_complet()
         case 2:
-            nomCsv=input("Entrez le nom du CSV à importer: ")
+            nomCsv=input("Enter the name of the file you want to import: ")
             automate.importCSV(nomCsv)
             automate.deterministe()
             with open("csv/"+nomCsv, mode='w', newline='') as file:
                 writer = csv.writer(file)
                     
                 # Écrire les données dans le fichier CSV
-                writer.writerow(['État Initial ', automate.initial])
+                writer.writerow(['Initial State', automate.initial])
                 final= " ".join(automate.final)
-                writer.writerow(['État Final ', final])
+                writer.writerow(['Final State', final])
                 writer.writerow([])
-                writer.writerow(['Premier etat', 'Deuxieme etat', 'Entrée'])
+                writer.writerow(['First State', 'Second State', 'Event'])
                 for transition in automate.transition:
                     writer.writerow(transition)   
                 print("\n")
-                print(f"Les données ont été enregistrées dans le fichier {nomCsv}.")
-            print("Votre AEF est maintenant déterministe")
+                print(f"Data has been saved in the file {nomCsv}.")
+            print("Your FSA is now deterministic!")
         case 3:
             automate.emonde()
         case 4:
@@ -132,68 +139,70 @@ def improve():
         case 5:
             menu()
         case _:
-            print("Choix invalide. Choisir une option valide (1-5).")
+            print("Invalid choice. Choose a valid option (1-5).")
         
     
 def operation():
     print("\n"*5)
 
     print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-    print("Sélectionne une option pour exécuter une opération sur l'AEF :")
-    print("1. Complément d'un AEF")
-    print("2. Miroir d'un AEF")
-    print("3. Produit de 2 AEF")
-    print("4. Concaténation de 2 AEF")
-    print("5. Retour")
+    print("                          Select an option :            ")
+    print("1. Complementary")
+    print("2. Mirror")
+    print("3. Product")
+    print("4. Concatenation")
+    print("5. Return")
     print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
     
     option = input("Faites votre choix>> ")
     
     match(int(option)):
         case 1:
-            nomCsv=input("Entrez le nom du CSV à importer: ")
-            sortie=input("Entrez le nom du CSV pour stocker le complémentaire: ")
+            automate=Automate()
+            nomCsv=input("Enter the name of the file you want to import: ")
+            sortie=input("Enter the name of the file where you want to stock the complementary: ")
             automate.importCSV(nomCsv)
             automate.complement()
             with open("csv/"+sortie, mode='w', newline='') as file:
                 writer = csv.writer(file)
                     
                 # Écrire les données dans le fichier CSV
-                writer.writerow(['État Initial ', automate.initial])
+                writer.writerow(['Initial State', automate.initial])
                 final= " ".join(automate.final)
-                writer.writerow(['État Final ', final])
+                writer.writerow(['Final State', final])
                 writer.writerow([])
-                writer.writerow(['Premier etat', 'Deuxieme etat', 'Entrée'])
+                writer.writerow(['First State', 'Second State', 'Event'])
                 for transition in automate.transition:
                     writer.writerow(transition)   
                 print("\n")
-                print(f"Les données ont été enregistrées dans le fichier {sortie}.")
-            print("Complément de l'AEF terminé")
+                print(f"Data has been saved in the file {sortie}.")
+            print("Complementary of the FSA saved successfully.")
         case 2:
-            nomCsv=input("Entrez le nom du CSV à importer: ")
-            sortie=input("Entrez le nom du CSV pour stocker le miroir: ")
+            automate=Automate()
+            nomCsv=input("Enter the name of the file you want to import: ")
+            sortie=input("Enter the name of the file where you want to stock the mirror: ")
             automate.importCSV(nomCsv)
             automate.miroir()
             with open("csv/"+sortie, mode='w', newline='') as file:
                 writer = csv.writer(file)
                     
                 # Écrire les données dans le fichier CSV
-                writer.writerow(['État Initial ', automate.initial])
+                writer.writerow(['Initial State', automate.initial])
                 final= " ".join(automate.final)
-                writer.writerow(['État Final ', final])
+                writer.writerow(['Final State', final])
                 writer.writerow([])
-                writer.writerow(['Premier etat', 'Deuxieme etat', 'Entrée'])
+                writer.writerow(['First State', 'Second State', 'Event'])
                 for transition in automate.transition:
                     writer.writerow(transition)   
                 print("\n")
-                print(f"Les données ont été enregistrées dans le fichier {sortie}.")
-            print("miroir de l'AEF terminé")
+                print(f"Data has been saved in the file {sortie}.")
+            print("Mirror of the FSA saved successfully.")
         case 3:
             automate2=Automate()
             automate3=Automate()
-            nomCsv1=input("Entrez le nom du CSV de l'automate 1 à importer: ")
-            nomCsv2=input("Entrez le nom du CSV de l'automate 2 à importer: ")
-            sortie=input("Entrez le nom du CSV pour stocker le produit: ")
+            nomCsv1=input("Enter the name of the first file you want to import: ")
+            nomCsv2=input("Enter the name of the second file you want to import: ")
+            sortie=input("Enter the name of the file where you want to stock the product: ")
         
             automate2.importCSV(nomCsv1)
             automate3.importCSV(nomCsv2)
@@ -202,22 +211,22 @@ def operation():
                 writer = csv.writer(file)
                     
                 # Écrire les données dans le fichier CSV
-                writer.writerow(['État Initial ', automate.initial])
-                final=" ".join(automate.final)
-                writer.writerow(['État Final ', final])
+                writer.writerow(['Initial State', automate.initial])
+                final= " ".join(automate.final)
+                writer.writerow(['Final State', final])
                 writer.writerow([])
-                writer.writerow(['Premier etat', 'Deuxieme etat', 'Entrée'])
+                writer.writerow(['First State', 'Second State', 'Event'])
                 for transition in automate.transition:
                     writer.writerow(transition)   
                 print("\n")
-                print(f"Les données ont été enregistrées dans le fichier {sortie}.")
-            print("Produit de l'AEF terminé")
+                print(f"Data has been saved in the file {sortie}.")
+            print("Product saved successfully.")
         case 4:
             automate2=Automate()
             automate3=Automate()
-            nomCsv1=input("Entrez le nom du CSV de l'automate 1 à importer: ")
-            nomCsv2=input("Entrez le nom du CSV de l'automate 2 à importer: ")
-            sortie=input("Entrez le nom du CSV pour stocker la concaténation: ")
+            nomCsv1=input("Enter the name of the first file you want to import: ")
+            nomCsv2=input("Enter the name of the second file you want to import: ")
+            sortie=input("Enter the name of the file where you want to stock the concatenation: ")
         
             automate2.importCSV(nomCsv1)
             automate3.importCSV(nomCsv2)
@@ -230,19 +239,18 @@ def operation():
                 writer = csv.writer(file)
                     
                 # Écrire les données dans le fichier CSV
-                writer.writerow(['État Initial ', automate.initial])
+                writer.writerow(['Initial State', automate.initial])
                 final= " ".join(automate.final)
-                writer.writerow(['État Final ', final])
+                writer.writerow(['Final State', final])
                 writer.writerow([])
-                writer.writerow(['Premier etat', 'Deuxieme etat', 'Entrée'])
+                writer.writerow(['First State', 'Second State', 'Event'])
                 for transition in automate.transition:
                     writer.writerow(transition)   
                 print("\n")
-                print(f"Les données ont été enregistrées dans le fichier {sortie}.")
-            print("concaténation de l'AEF terminé")
+                print(f"Data has been saved in the file {sortie}.")
+            print("Concatenation saved successfully.")
         case 5:
             menu()
         case _:
-            print("Choix invalide. Choisir une option valide (1-5).")
-
+            print("Invalid choice. Choose a valid option (1-5).")
             
