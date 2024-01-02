@@ -2,6 +2,9 @@ import os
 import csv
 from menu import *  
 import pandas as pd
+import networkx as nx
+import matplotlib.pyplot as plt
+import csv
 
 def fichierExistence():
 
@@ -103,8 +106,11 @@ class Automate:
             self.final = input("\nPlease enter the final state (if several final states, please separate them with a space): ")
 
             # Demander à l'utilisateur de saisir les transitions sous forme de matrice
-            print("\nEnter the transitions of your automaton as a matrix (please separate elements with spaces):")            
-            print("Put 'ok' to finish.\n")
+            print("\nEnter the transitions of your automaton as a matrix with 'State1 State2 Event'(please separate elements with spaces)")   
+            print("For example: q0 q1 a")
+            print("Put 'ok' to finish.")
+            print("Your turn:\n")
+
             
             #on effectue une boucle tant qu'il n'appuie pas sur ok on continu
             while True:
@@ -123,10 +129,10 @@ class Automate:
                 writer = csv.writer(file)
                 
                 # Écrire les données dans le fichier CSV
-                writer.writerow(['État Initial ', self.initial])
-                writer.writerow(['État Final ', self.final])
+                writer.writerow(['Initial State ', self.initial])
+                writer.writerow(['Final State ', self.final])
                 writer.writerow([])
-                writer.writerow(['Premier etat', 'Deuxieme etat', 'Entrée'])
+                writer.writerow(['First State', 'Second State', 'Event'])
                 for transition in self.transition:
                     writer.writerow(transition)   
             print("\n")
@@ -280,7 +286,7 @@ class Automate:
             writer = csv.writer(file)
             writer.writerows(data)
 
-        print("\nLa ligne a été supprimée avec succès.")
+        print("\nThe line was deleted successfully.")
         return
     
 
@@ -315,7 +321,7 @@ class Automate:
                 print("\n\033[91mPlease enter a valid number or '0' to cancel.\033[0m\n")
 
         new_line = []
-        for col_name in ["Premier etat", "Deuxieme etat", "Transitions"]:
+        for col_name in ["First State", "Second State", "Event"]:
             new_value = input(f"Enter the value for column '{col_name}' : ")
             new_line.append(new_value)
 
@@ -371,7 +377,7 @@ class Automate:
 
 
     
-    def complet(self):
+    def estComplet(self):
         transitions = {}
         etats = []
         alphabet = []
@@ -589,19 +595,57 @@ class Automate:
 
         return automate_result
 
+    
+    def affichage(self):
+        while True:
+            # Demande à l'utilisateur le nom du fichier CSV à modifier 
+            
+            fichierExistence()
+        
+            file_name = input("\nEnter the name of the file to display: ")
+            csv_folder = "csv"
+            csv_file_path = f"{csv_folder}/{file_name}"
 
-"""
-  
-    deterministe:
-    Il possède un unique état initial.
-    Il ne possède pas d’epsilon-transitions.
-    Pour chaque état de cet automate, il existe au maximum une transition issue de cet état possédant le même symbole.
+            if not os.path.exists(csv_file_path):  # Vérifier si le fichier existe
+                print("\033[91mThis file doesn't exist. Please choose another file.\033[0m")
+                return
 
-    complet:
-    Depuis n’importe quel état, tous les symboles de l’alphabet doivent appartenir au moins une fois aux transitions (sortantes).
-    Pour obtenir un automate équivalent, complet, il suffit de créer un état “puits”, ou état “poubelle”. 
+            G = nx.DiGraph()
 
-    emondé:
-    Un automate est dit émondé (ou utile) si tous les états de cet automate peuvent former au moins un mot du langage.
-    Par exemple : Cet automate est fini émondé. q0, q1 et q3 peuvent servir tous les 3 à la création du langage.
-"""
+            # Lire le fichier CSV et ajouter les transitions au graphe
+            with open(self, 'r') as file:
+                reader = csv.reader(file)
+                next(reader)  # Ignorer la première ligne
+                for row in reader:
+                    if len(row) == 3:
+                        G.add_edge(row[0], row[1], label=row[2])
+
+            # Ajouter des attributs aux nœuds pour les états initiaux et finaux
+            with open(self, 'r') as file:
+                reader = csv.reader(file)
+                next(reader)  # Ignorer la première ligne
+                for row in reader:
+                    if len(row) == 2:
+                        if row[0] == 'Initial State':
+                            G.nodes[row[1]]['initial'] = True
+                        elif row[0] == 'Final State':
+                            G.nodes[row[1]]['final'] = True
+
+            # Dessiner le graphe
+            pos = nx.circular_layout(G)  # Ajustez l'algorithme de disposition si nécessaire
+            labels = nx.get_edge_attributes(G, 'label')
+            initial_states = [node for node, data in G.nodes(data=True) if 'initial' in data and data['initial']]
+            final_states = [node for node, data in G.nodes(data=True) if 'final' in data and data['final']]
+
+            nx.draw_networkx_nodes(G, pos, node_size=500,  nodelist=set(G.nodes) - set(initial_states + final_states))
+            
+            nx.draw_networkx_edges(G, pos)
+            nx.draw_networkx_labels(G, pos)
+
+            edge_labels = {(u, v): labels[(u, v)] for u, v in G.edges}
+            edge_label_pos = {k: (v[0], v[1] + 0.1) for k, v in pos.items()}  # Ajuster la position en y
+            nx.draw_networkx_edge_labels(G, edge_label_pos, edge_labels=edge_labels)
+
+            plt.show()
+
+
