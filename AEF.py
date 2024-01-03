@@ -1,10 +1,9 @@
 import os
 import csv
-from menu import *  
 import pandas as pd
 import networkx as nx
 import matplotlib.pyplot as plt
-import csv
+
 
 def fichierExistence():
 
@@ -756,7 +755,7 @@ class Automate:
           
             fait[left.split("L")[1]]=equations[i].split("=")[1]
         
-        return equations[0]
+        print(equations[0].split("=")[1])
     
     def estComplet(self, nomCsv):
         transitions = {}

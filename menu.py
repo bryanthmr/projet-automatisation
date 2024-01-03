@@ -2,9 +2,9 @@ from AEF import *
 import csv
 
 
-automate=Automate()
 
 
+automate=Automate
 
  
 #menu central
@@ -253,7 +253,8 @@ def operation():
                 print(f"Data has been saved in the file {sortie}.")
             print("Concatenation saved successfully.")
         case 5:
-            nomCsv=input("Enter the name of the second file you want to import: ")
+            automate=Automate()
+            nomCsv=input("Enter the name of the file you want to import: ")
             automate.importCSV(nomCsv)
             automate.regex()
         case 6:
@@ -261,3 +262,4 @@ def operation():
         case _:
             print("Invalid choice. Choose a valid option (1-5).")
             
+menu()
