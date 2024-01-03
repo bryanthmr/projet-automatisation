@@ -1,7 +1,13 @@
 import csv
 import os
 
+<<<<<<< HEAD
 def ModifierEtat(csv_file_path):
+=======
+
+def ModifierEtat(csv_file_path):
+
+>>>>>>> Eya
     # Lire le fichier CSV existant
     with open(csv_file_path, mode='r') as file:
         reader = csv.reader(file)
@@ -31,6 +37,7 @@ def ModifierEtat(csv_file_path):
         writer.writerows(data)
 
     print("\nLes données ont été mises à jour avec succès.")
+<<<<<<< HEAD
     return
 
 
@@ -117,3 +124,5 @@ def AjoutLigne(csv_file_path):
 
     print("\nLa ligne a été ajoutée avec succès.")
     return
+=======
+>>>>>>> Eya

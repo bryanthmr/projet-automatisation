@@ -32,7 +32,7 @@ def afficher_automate(csv_file):
 
     nx.draw_networkx_nodes(G, pos, node_size=1000, nodelist=initial_states)
     nx.draw_networkx_nodes(G, pos, node_size=1000, nodelist=final_states)
-    nx.draw_networkx_nodes(G, pos, node_size=500 , nodelist=set(G.nodes) - set(initial_states + final_states))
+    nx.draw_networkx_nodes(G, pos, node_size=500, nodelist=set(G.nodes) - set(initial_states + final_states))
     
     nx.draw_networkx_edges(G, pos)
     nx.draw_networkx_labels(G, pos)
@@ -44,5 +44,5 @@ def afficher_automate(csv_file):
     plt.show()
 
 # Utilisation du code
-csv_file_path = 'csv/hadj.csv'  # Remplacez par le chemin de votre fichier CSV
+csv_file_path = 'csv/nondet'  # Remplacez par le chemin de votre fichier CSV
 afficher_automate(csv_file_path)

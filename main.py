@@ -1,4 +1,0 @@
-from menu import *
-
-
-menu()
