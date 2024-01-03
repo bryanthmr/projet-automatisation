@@ -105,7 +105,9 @@ def improve():
     option = input("Faites votre choix>> ")
     match(int(option)):
         case 1:
-            AEF_complet()
+            nomCsv=input("Entrez le nom du CSV à importer: ")
+            automate.importCSV(nomCsv)
+            automate.rendre_complet(nomCsv)
         case 2:
             nomCsv=input("Entrez le nom du CSV à importer: ")
             automate.importCSV(nomCsv)
