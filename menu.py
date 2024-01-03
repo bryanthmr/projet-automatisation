@@ -4,13 +4,11 @@ import csv
 
 automate=Automate()
 
-automate.importCSV("testb.csv")
 
 
 
-automate.regex()
 
-exit(0)
+
 #menu central
 def menu():
     
@@ -145,7 +143,8 @@ def operation():
     print("2. Miroir d'un AEF")
     print("3. Produit de 2 AEF")
     print("4. Concaténation de 2 AEF")
-    print("5. Retour")
+    print("5. Générer une expression régulière d'un AEF")
+    print("6. Retour")
     print("|||||||||||||||||||||||||||")
     
     option = input("Faites votre choix>> ")
@@ -220,6 +219,10 @@ def operation():
                 print(f"Les données ont été enregistrées dans le fichier {sortie}.")
             print("concaténation de l'AEF terminé")
         case 5:
+            nomCsv=input("Entrez le nom du CSV de l'automate à importer: ")
+            automate.importCSV(nomCsv)
+            automate.regex()
+        case 6:
             menu()
         case _:
             print("Choix invalide. Choisir une option valide (1-5).")

@@ -726,25 +726,8 @@ class Automate:
        
         fait={}
         for i in range(len(equations)-1,-1,-1):
-            """
-            print(equations[i])
-            if(i==0):
-                for j in range(len(equations)):
-                    for e in range(len(equations)):
-                        if(equations[e].split('=')[0]!=equations[0].split('=')[0]):
-                            print(equations[0])
-                            equations[0]=equations[0].replace(f"{equations[e].split('=')[0]}",equations[e].split("=")[1])
-            elif(i!=len(equations)-1):
-                
-                equations[i]=equations[i].replace(f"{equations[i+1].split('=')[0]}",equations[i+1].split("=")[1])
-                print(equations[i])
-            equations[i]=factorisation(equations[i])
-            print(equations[i])
-            equations[i]=arden(equations[i])
-            print(equations[i])
-        
-            """
-            print(equations[i])
+
+            
             right=equations[i].split("=")[1]
             left=equations[i].split("=")[0]
             
@@ -777,17 +760,133 @@ class Automate:
                     if(elt!="ε"):
                         if(elt.split("L")[1] in fait.keys()):
                             equations[i]=equations[i].replace(f"L{elt.split('L')[1]}",fait[f"{elt.split('L')[1]}"])
-                            print(equations[i])
+                            
             
 
                     
                      
             equations[i]=factorisation(equations[i])
-            print(equations[i])
+          
             equations[i]=arden(equations[i])
-            print(equations[i])
+          
             fait[left.split("L")[1]]=equations[i].split("=")[1]
-                                 
+        
+        return equations[0]
+    
+    def complet(self, nomCsv):
+        transitions = {}
+        etats = []
+        alphabet = []
+
+        # Lire le fichier CSV
+        with open("csv/"+nomCsv, 'r') as csv_file:
+            csv_reader = csv.reader(csv_file)
+
+            # Ignorer les quatre premières lignes
+            for _ in range(4):
+                next(csv_reader)
+
+            # Parcourir les lignes du fichier CSV à partir de la ligne 5
+            for row in csv_reader:
+                premier_etat = row[0]
+                entree = row[2]
+
+                # Ajouter le premier état de la ligne à la liste des états en évitant les doublons avec la condition if
+                if premier_etat not in etats:
+                    etats.append(premier_etat)
+
+                # Ajouter le symbole d'entrée à la liste de l'alphabet (sans doublons)
+                if entree not in alphabet: # Condition qui permet d'éviter les doublons
+                    alphabet.append(entree)
+
+                # Ajouter les transitions à la liste des transitions
+                if premier_etat not in transitions:
+                    transitions[premier_etat] = []
+
+                transitions[premier_etat].append(entree)
+
+        # Vérifier si chaque état a une transition pour chaque symbole de l'alphabet
+        for etat in etats:
+            if etat not in transitions:
+                return False
+            if len(transitions[etat]) != len(alphabet):
+                return False
+
+        return True
+
+
+    def rendre_complet(self, nomCsv): # Création d'un état puit et rajout de ce dernier dans le fichier csv de l'automate pour le rendre complet.
+
+        # On vérifie si l'automate est déjà complet.
+        if self.complet(nomCsv):
+            print("L'automate est déjà complet.") # Vérification peut être inutile car c'est le but de la fonction de rendre complet, à voir pour sup ou pas.
+
+        transitions = {}
+        etats = []
+        alphabet = []
+
+        # Lire le fichier CSV
+        with open("csv/"+nomCsv, 'r') as csv_file:
+            csv_reader = csv.reader(csv_file)
+
+            # Ignorer les quatre premières lignes
+            for _ in range(4):
+                next(csv_reader)
+
+            # Parcourir les lignes du fichier CSV à partir de la ligne 5
+            for row in csv_reader:
+                premier_etat = row[0]
+                entree = row[2]
+
+                # Ajouter le premier état de la ligne à la liste des états en évitant les doublons avec la condition if
+                if premier_etat not in etats:
+                    etats.append(premier_etat)
+
+                # Ajouter le symbole d'entrée à la liste de l'alphabet (sans doublons)
+                if entree not in alphabet:
+                    alphabet.append(entree)
+
+                # Ajouter les transitions à la liste des transitions
+                
+                if premier_etat not in transitions:
+                    transitions[premier_etat] = []
+                
+                transitions[premier_etat].append(entree)
+
+        unique_transitions = set() # Là on créer un ensemble pour stocker les transitions de manière unique pour éviter les doublons
+
+        # On ajoute un état puit spécifique pour chaque état qui en a besoin
+        for etat in etats:
+            if etat not in transitions:
+                transitions[etat] = []
+
+            # On vérifie les transitions manquantes pour chaque symbole
+            for symbole in alphabet:
+                # Si la transition n'existe pas, on ajoute une transition vers un état puit s^écifique
+                if symbole not in transitions[etat]:
+                    puit_numero = self.numero_puit(etat)
+                    etat_puit = f"puit{puit_numero}"
+
+                    if etat_puit not in etats:
+                        etats.append(etat_puit)
+
+                    if etat_puit not in transitions:
+                        transitions[etat_puit] = []
+
+                    # On ajoute la transition à l'ensemble des transitions uniques
+                    if "puit" not in etat or ("puit" in etat and "puit" not in etat_puit): # On vérifie que l'état de départ ne soit pas un état puit
+                        unique_transitions.add((etat, etat_puit, symbole))
+        
+        with open("csv/"+nomCsv, mode='a', newline='') as file: # On met en mode ajout pour éviter d'écraser le contenu et de devoir réécrire à chaque fois
+            writer = csv.writer(file)
+            for transition in unique_transitions:
+                if not transition[0].startswith("puit"):
+                    writer.writerow(transition)
+
+    def numero_puit(self, etat):
+        # On extrait le numéro du puit à partir du nom de l'état 
+        # Comme ça on aura un état q et un état puit avec le même numéro pour les associer visuellement
+        return int(etat[1:]) + 1 if etat[0] == 'q' else 1                      
                         
                     
 
