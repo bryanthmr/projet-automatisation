@@ -1,172 +1,256 @@
-from fonction import *
-from verif2 import *
-from modif import *
+from AEF import *
+import csv
 
+
+automate=Automate()
+
+
+
+ 
 #menu central
 def menu():
-    for i in range (10):
-        print("\n")  
-    print("----------------------------")
-    print("Select an option :")
-    print("1. Créer un automate")
-    print("2. Modifier un AEF")
-    print("3. Supprimer un  AEF")
-    print("4. Verification")
-    print("5. Ameliorer l'AEF")
-    print("6. Exit")
-    print("----------------------------")
+    
+    print("\n"*2)
+    print("\033[38;5;120m┌============================================┐\033[0m")
+    print("\033[38;5;120m|\033[0m              Select an option :            \033[38;5;120m|\033[0m")
+    print("\033[38;5;120m|\033[0m 1. ~Creation                               \033[38;5;120m|\033[0m")
+    print("\033[38;5;120m|\033[0m 2. ~Modification                           \033[38;5;120m|\033[0m")
+    print("\033[38;5;120m|\033[0m 3. ~Deletion                               \033[38;5;120m|\033[0m")
+    print("\033[38;5;120m|\033[0m 4. ~Verification                           \033[38;5;120m|\033[0m")
+    print("\033[38;5;120m|\033[0m 5. ~Improvement                            \033[38;5;120m|\033[0m")
+    print("\033[38;5;120m|\033[0m 6. ~Operation                              \033[38;5;120m|\033[0m")
+    print("\033[38;5;120m|\033[0m 7. ~Display                                \033[38;5;120m|\033[0m")
+    print("\033[38;5;120m|\033[0m 8. ~Exit                                   \033[38;5;120m|\033[0m")
+    print("\033[38;5;120m└============================================┘\033[0m")
 
-    option = input("Faire votre choix>> ")
-    if option == "1":
-        create()
-    elif option == "2":
-        print("Tu as choisi 'Modifier un AEF'.")
-        modifier2()
-    elif option == "3":
-        supprimer()
-    elif option == "4":
-        verif()
-    elif option == "5":
-        improve()
-    elif option == "6":
-        print("Goodbye !")
-        exit
-    else:
-        print("Choix invalide. Choisir une option valide (1-6).")
+
+    option = input("Select a number >> ")
+    match(int(option)):
+        case 1:
+            print("\nWelcome in Creation!\n")
+            automate.create()
+        case 2:
+            print("\nWelcome in Modification!\n")
+            automate.modifier()
+        case 3:
+            print("\nWelcome in Deletion!")
+            automate.supprimer()
+        case 4:
+            print("\nWelcome in Verification!")
+            verif()
+        case 5:
+            print("\nWelcome in Improvement!")
+            improve()
+        case 6:
+            print("\nWelcome in Operation!")
+            operation()
+        case 7:
+            automate.affichage()
+        case 8:
+            print("Goodbye !")
+            exit(0)
+        case _:
+            print("Invalid choice. Choose a valid option (1-7).")
+    menu()
         
 
 # menu pour acceder a toutes les verifications
 def verif():
-    for i in range (10):
-        print("\n")
-    # Demande à l'utilisateur le nom du fichier CSV à modifier
-    #point negatif : il faut se rappeler du nom 
-    print("Voici les fichiers déjà existants: zyjgzydgdg ")
-    os.system("ls ~/Python/ProjetAutomates/csv |cat")
-    #On peut meme afficher les fichier deja exisants et lui demander de choisir sous forme de menu 
-    file_name = input("Entrez le nom du fichier CSV à modifier : ")
-    csv_folder = "csv"
-    csv_file_path = os.path.join(csv_folder, file_name)
+    print("\n"*5)
+        
+    print("----------------------------------------------------------")
+    print("                    Select an option :            ")
+    print("1. If a word is recognized")
+    print("2. If an automaton is complete")
+    print("3. If an automaton is deterministic")
+    print("4. If all cycles are unitary")
+    print("5. If two automata are equivalent")
+    print("6. Return")
+    print("----------------------------------------------------------")
 
-    if not os.path.exists(csv_file_path):  # Vérifier si le fichier existe
-        print("\n\033[91mLe fichier n'existe pas. Veuillez choisir un fichier existant.\033[0m")
-        return   
-    # Lire le fichier CSV existant
-    with open(csv_file_path, mode='r') as file:
-        reader = csv.reader(file)
-        data = list(reader)
-    print("#######################")
-    print("Select an option de vérification :")
-    print("1. Si un mot est reconnu")
-    print("2. Si un automate est complet")
-    print("3. Si un automate est deterministe")
-    print("4. Si tous les cycles sont unitaires")
-    print("5. L'equivalence entre 2 automates")
-    print("6. Retour")
-    print("########################")
-
-    option = input("Faire votre choix>> ")
-    if option == "1":
-        mot(automate, mot)
-    elif option == "2":
-        complet(csv_file_path)
-    elif option == "3":
-
-        deterministe(csv_file_path)
-
-        if not os.path.exists(csv_file_path):  # Vérifier si le fichier existe
-            print("\n\033[91mLe fichier n'existe pas. Veuillez choisir un fichier existant.\033[0m")
-        else:
-            if deterministe(csv_file_path):
-                print("L'automate est déterministe.")
+    option = input("Select a number >> ")
+    match(int(option)):
+        case 1:
+            mot(automate, mot)
+        case 2:
+            nomCsv=input("Enter the name of the file you want to import: ")
+            automate.importCSV(nomCsv)
+            if(automate.estComplet()):
+                print("This is a complete automaton.")
             else:
-                print("L'automate n'est pas déterministe.")
-
-    elif option == "4":
-        unitaire()
-    elif option == "5":
-        equivalence()
-    elif option == "6":
-        menu()
-        exit
-    else:
-        print("Choix invalide. Choisir une option valide (1-6).")
+                print("This is not a complete automaton.")
+        
+        case 3:
+            nomCsv=input("EEnter the name of the file you want to import: ")
+            automate.importCSV(nomCsv)
+            if(automate.estDeterministe()):
+                print("This is a deterministic automaton.")
+            else:
+                print("This is not a deterministic automaton.")
+        case 4:
+            automate.unitaire()
+        case 5:
+            automate.equivalence()
+        case 6:
+            menu()       
+        case _:
+            print("Invalid choice. Choose a valid option (1-6).")
 
 #menu pour acceder aux améliorations possibles
 def improve():
 
-    for i in range (10):
-        print("\n")
+    print("\n"*5)
 
-    print("|||||||||||||||||||||||||||")
-    print("Select an option pour améliorer l'AEF :")
-    print("1. Rendre un automate complet")
-    print("2. Rendre un automate deterministe")
-    print("3. Rendre un automate émondé")
-    print("4. Rendre un automate minimal")
-    print("5. Retour")
-    print("|||||||||||||||||||||||||||")
+    print("************************************************************")
+    print("                    Select an option :            ")
+    print("1. Make a complet automaton")
+    print("2. Make a deterministic automaton")
+    print("3. Make a pruned automaton")
+    print("4. Make a minimal automaton")
+    print("5. Return")
+    print("************************************************************")
 
-    option = input("Faire botre choix>> ")
-    if option == "1":
-        AEF_complet()
-    elif option == "2":
-        AEF_deterministe()
-    elif option == "3":
-        emonde()
-    elif option == "4":
-        minimal()
-    elif option == "5":
-        menu()
-    else:
-        print("Choix invalide. Choisir une option valide (1-5).")
-
-
-def modifier2():
-
-    print("Tu as choisi 'Modifier un AEF'.")
+    option = input("Faites votre choix>> ")
+    match(int(option)):
+        case 1:
+            AEF_complet()
+        case 2:
+            nomCsv=input("Enter the name of the file you want to import: ")
+            automate.importCSV(nomCsv)
+            automate.deterministe()
+            with open("csv/"+nomCsv, mode='w', newline='') as file:
+                writer = csv.writer(file)
+                    
+                # Écrire les données dans le fichier CSV
+                writer.writerow(['Initial State', automate.initial])
+                final= " ".join(automate.final)
+                writer.writerow(['Final State', final])
+                writer.writerow([])
+                writer.writerow(['First State', 'Second State', 'Event'])
+                for transition in automate.transition:
+                    writer.writerow(transition)   
+                print("\n")
+                print(f"Data has been saved in the file {nomCsv}.")
+            print("Your FSA is now deterministic!")
+        case 3:
+            automate.emonde()
+        case 4:
+            automate.minimal()
+        case 5:
+            menu()
+        case _:
+            print("Invalid choice. Choose a valid option (1-5).")
+        
     
-    # Demande à l'utilisateur le nom du fichier CSV à modifier
-    #point negatif : il faut se rappeler du nom 
-    print("Voici les fichiers déjà existants: ")
-    os.system("ls ~/Python/ProjetAutomates/csv |cat")
-#On peut meme afficher les fichier deja exisants et lui demander de choisir sous forme de menu 
-    file_name = input("Entrez le nom du fichier CSV à modifier : ")
-    csv_folder = "csv"
-    csv_file_path = os.path.join(csv_folder, file_name)
+def operation():
+    print("\n"*5)
 
-    if not os.path.exists(csv_file_path):  # Vérifier si le fichier existe
-        print("\n\033[91mLe fichier n'existe pas. Veuillez choisir un fichier existant.\033[0m")
-        return
+    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+    print("                          Select an option :            ")
+    print("1. Complementary")
+    print("2. Mirror")
+    print("3. Product")
+    print("4. Concatenation")
+    print("5. Return")
+    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
     
-    # Lire le fichier CSV existant
-    with open(csv_file_path, mode='r') as file:
-        reader = csv.reader(file)
-        data = list(reader)
-
-    for i in range (10):
-        print("\n")
-
-    print("|||||||||||||||||||||||||||")
-    print("Select an option pour modifier l'AEF :")
-    print("1. Modifier l'etat initial ou final")
-    print("2. Ajouter une ligne")
-    print("3. Supprimer une ligne")
-    print("5. Retour")
-    print("|||||||||||||||||||||||||||")
-
-  
-
-    option = input("Faire votre choix>> ")
-    if option == "1":
-        ModifierEtat(csv_file_path)
-    elif option == "2":
-        AjoutLigne()
-    elif option == "3":
-        SuppLigne()
-    elif option == "5":
-        menu()
-    else:
-        print("Choix invalide. Choisir une option valide (1-3).")
-
-
+    option = input("Faites votre choix>> ")
+    
+    match(int(option)):
+        case 1:
+            automate=Automate()
+            nomCsv=input("Enter the name of the file you want to import: ")
+            sortie=input("Enter the name of the file where you want to stock the complementary: ")
+            automate.importCSV(nomCsv)
+            automate.complement()
+            with open("csv/"+sortie, mode='w', newline='') as file:
+                writer = csv.writer(file)
+                    
+                # Écrire les données dans le fichier CSV
+                writer.writerow(['Initial State', automate.initial])
+                final= " ".join(automate.final)
+                writer.writerow(['Final State', final])
+                writer.writerow([])
+                writer.writerow(['First State', 'Second State', 'Event'])
+                for transition in automate.transition:
+                    writer.writerow(transition)   
+                print("\n")
+                print(f"Data has been saved in the file {sortie}.")
+            print("Complementary of the FSA saved successfully.")
+        case 2:
+            automate=Automate()
+            nomCsv=input("Enter the name of the file you want to import: ")
+            sortie=input("Enter the name of the file where you want to stock the mirror: ")
+            automate.importCSV(nomCsv)
+            automate.miroir()
+            with open("csv/"+sortie, mode='w', newline='') as file:
+                writer = csv.writer(file)
+                    
+                # Écrire les données dans le fichier CSV
+                writer.writerow(['Initial State', automate.initial])
+                final= " ".join(automate.final)
+                writer.writerow(['Final State', final])
+                writer.writerow([])
+                writer.writerow(['First State', 'Second State', 'Event'])
+                for transition in automate.transition:
+                    writer.writerow(transition)   
+                print("\n")
+                print(f"Data has been saved in the file {sortie}.")
+            print("Mirror of the FSA saved successfully.")
+        case 3:
+            automate2=Automate()
+            automate3=Automate()
+            nomCsv1=input("Enter the name of the first file you want to import: ")
+            nomCsv2=input("Enter the name of the second file you want to import: ")
+            sortie=input("Enter the name of the file where you want to stock the product: ")
+        
+            automate2.importCSV(nomCsv1)
+            automate3.importCSV(nomCsv2)
+            automate=automate2*automate3
+            with open("csv/"+sortie, mode='w', newline='') as file:
+                writer = csv.writer(file)
+                    
+                # Écrire les données dans le fichier CSV
+                writer.writerow(['Initial State', automate.initial])
+                final= " ".join(automate.final)
+                writer.writerow(['Final State', final])
+                writer.writerow([])
+                writer.writerow(['First State', 'Second State', 'Event'])
+                for transition in automate.transition:
+                    writer.writerow(transition)   
+                print("\n")
+                print(f"Data has been saved in the file {sortie}.")
+            print("Product saved successfully.")
+        case 4:
+            automate2=Automate()
+            automate3=Automate()
+            nomCsv1=input("Enter the name of the first file you want to import: ")
+            nomCsv2=input("Enter the name of the second file you want to import: ")
+            sortie=input("Enter the name of the file where you want to stock the concatenation: ")
+        
+            automate2.importCSV(nomCsv1)
+            automate3.importCSV(nomCsv2)
+            
+            
+            automate=automate2+automate3
+            
+            
+            with open("csv/"+sortie, mode='w', newline='') as file:
+                writer = csv.writer(file)
+                    
+                # Écrire les données dans le fichier CSV
+                writer.writerow(['Initial State', automate.initial])
+                final= " ".join(automate.final)
+                writer.writerow(['Final State', final])
+                writer.writerow([])
+                writer.writerow(['First State', 'Second State', 'Event'])
+                for transition in automate.transition:
+                    writer.writerow(transition)   
+                print("\n")
+                print(f"Data has been saved in the file {sortie}.")
+            print("Concatenation saved successfully.")
+        case 5:
+            menu()
+        case _:
+            print("Invalid choice. Choose a valid option (1-5).")
+            
