@@ -20,6 +20,131 @@ def fichierExistence():
         print(file) 
 
 
+def arden(equation):
+    right=equation.split("=")[1]
+    left=equation.split("=")[0]
+    
+    
+    acc=0
+    d={}
+    e=0
+    for l in right:
+        if(l=="("):
+            acc+=1
+            if(d.get(f"S{e}","nothing")=="nothing"):
+                d[f"S{e}"]=l
+            else:
+               d[f"S{e}"]=d[f"S{e}"]+l 
+        elif(l==")"):
+            acc-=1
+            d[f"S{e}"]=d[f"S{e}"]+l 
+        elif(acc>0):
+            d[f"S{e}"]=d[f"S{e}"]+l
+        elif(acc==0):
+            e+=1
+            
+    if(d!={}):      
+        for elt in d:
+            right=right.replace(d[elt],elt)
+    
+    lst=right.split("+")
+    
+    for i in range(len(lst)):
+        if((left in lst[i]) & (len(lst)>1)):
+            if(len(lst[i].split("L")[0])>1):
+                tmp=lst[i].split("L")[0]
+                if(tmp in d.keys()):
+                    if(not((d[tmp][0]=="(") & (d[tmp][-1]==")"))):
+                        tmp=f"({tmp})"
+                elif(not((tmp[0]=="(") & (tmp[-1]==")"))):
+                    tmp=f"({tmp})"
+                lst[i]=tmp+"L"+lst[i].split("L")[1]
+                lst[i]=lst[i].replace(f"{left}","*")
+            else:
+                lst[i]=lst[i].replace(f"{left}","*")
+            
+            tmp=lst[i]
+            lst.remove(lst[i])
+            if(lst[0]=="ε"):
+                lst[0]=tmp
+            else:
+                
+                lst[0]=tmp+lst[0]
+            right="+".join(lst)
+            if(len(right.split("+"))):
+                break
+    
+    if(d!={}):
+        for elt in d:
+            right=right.replace(elt,d[elt])
+        
+    return f"{left}={right}"
+
+
+
+def factorisation(equation):
+    right=equation.split("=")[1]
+    left=equation.split("=")[0]
+       
+    
+    acc=0
+    k={}
+    e=0
+    for l in right:
+        if(l=="("):
+            acc+=1
+            if(k.get(f"S{e}","nothing")=="nothing"):
+                k[f"S{e}"]=l
+            else:
+               k[f"S{e}"]=k[f"S{e}"]+l 
+        elif(l==")"):
+            acc-=1
+            k[f"S{e}"]=k[f"S{e}"]+l 
+        elif(acc>0):
+            k[f"S{e}"]=k[f"S{e}"]+l
+        elif(acc==0):
+            e+=1
+    
+    
+    
+    if(k!={}):      
+        for elt in k:
+            right=right.replace(k[elt],elt) 
+    d={}
+    lst=right.split("+")
+    for i in range(len(lst)):
+        if(len(lst[i].split("L"))==1):
+            d["epsilon"]=lst[i]
+            
+        elif(d.get(lst[i].split("L")[1],"nothing")!="nothing"):
+            d[lst[i].split("L")[1]].append(lst[i].split("L")[0])
+        else:
+           
+            d[lst[i].split("L")[1]]=[lst[i].split("L")[0]] 
+    lst=[]  
+    for elt in d:
+        if(elt=="epsilon"):
+            lst.append(f"{d[elt][0]}")
+        elif(len(d[elt])>1):
+            lst.append(f"({d[elt][0]}+{d[elt][1]})L{elt}")
+        else:
+            lst.append(f"{d[elt][0]}L{elt}")
+        
+    
+
+    
+    
+    right="+".join(lst)
+    
+    if(k!={}):
+        for elt in k:
+            right=right.replace(elt,k[elt])
+    
+    
+    return f"{left}={right}"
+            
+        
+            
 
 class Automate:
     
@@ -525,20 +650,161 @@ class Automate:
         automate3.transition=transition
         return automate3
 
+
+    
+    def init_equation(self,etat,fait,d,i,equations):
+        for t in self.transition:
+            if((etat in self.final) & ([etat,"?","ε"] not in fait)):
+                if(etat != self.initial):
+                    if(d.get(etat,"nothing")=="nothing"):
+                        d[etat]=f"L{i}"
+                        i+=1
+                    equation=f"{d[etat]}=ε"
+                    equations.remove(f"{d[etat]}=?")
+                    equations.append(equation)
+                    
+                    fait.append([etat,"?","ε"])
+                else:
+                    for e in range(len(equations)):
+                        if(equations[e].split("=")[0]==d[etat]):
+                            equations[e]=equations[e]+"+ε"
+            if((t[0]==etat) & (t not in fait)):
+                if(d.get(t[0],"nothing")=="nothing"):
+                    d[t[0]]=f"L{i}"
+                    i+=1
+                    fait.append(t)
+                    if(d.get(t[1],"nothing")=="nothing"):
+                        d[t[1]]=f"L{i}"
+                        i+=1
+                        equation=f"{d[t[1]]}=?"
+                        equations.append(equation)
+                    equation=f"{d[t[0]]}={t[2]}{d[t[1]]}"
+                    equations.append(equation)
+                    
+                    
+                    self.init_equation(t[1],fait,d,i,equations)
+                    
+                else:
+                    fait.append(t)
+                    for e in range(len(equations)):
+                        if(equations[e].split("=")[0]==d[t[0]]):
+                            if(d.get(t[1],"nothing")=="nothing"):
+                                d[t[1]]=f"L{i}"
+                                i+=1
+                                equation=f"{d[t[1]]}=?"
+                                equations.append(equation)
+                            if(equations[e].split("=")[1]=="?"):
+                                tmp=equations[e].split("=")[1]
+                                tmp=f"{t[2]}{d[t[1]]}"
+                                
+                            else:
+                                tmp=equations[e].split("=")[1]
+                                tmp=f"{tmp}+{t[2]}{d[t[1]]}"
+                                
+                            equations[e]=equations[e].split("=")[0]+"="+tmp
+                
+                    self.init_equation(t[1],fait,d,i,equations)
+            
+                           
+
         
+        return equations
+    
+    def regex(self):
+        
+        
+        equations=self.init_equation(self.initial,[],{},0,[])
+        for i in range(len(equations)):
+        
+            if("ε" in equations[i]):
+                equations[i]=equations[i].replace("ε+","")
+                equations[i]=equations[i].replace("+ε","")
+                equations[i]=equations[i]+"+ε"
+          
+            
+            
+       
+        fait={}
+        for i in range(len(equations)-1,-1,-1):
+            """
+            print(equations[i])
+            if(i==0):
+                for j in range(len(equations)):
+                    for e in range(len(equations)):
+                        if(equations[e].split('=')[0]!=equations[0].split('=')[0]):
+                            print(equations[0])
+                            equations[0]=equations[0].replace(f"{equations[e].split('=')[0]}",equations[e].split("=")[1])
+            elif(i!=len(equations)-1):
+                
+                equations[i]=equations[i].replace(f"{equations[i+1].split('=')[0]}",equations[i+1].split("=")[1])
+                print(equations[i])
+            equations[i]=factorisation(equations[i])
+            print(equations[i])
+            equations[i]=arden(equations[i])
+            print(equations[i])
+        
+            """
+            print(equations[i])
+            right=equations[i].split("=")[1]
+            left=equations[i].split("=")[0]
+            
+            
+            acc=0
+            d={}
+            e=0
+            for l in right:
+                if(l=="("):
+                    acc+=1
+                    if(d.get(f"S{e}","nothing")=="nothing"):
+                        d[f"S{e}"]=l
+                    else:
+                        d[f"S{e}"]=d[f"S{e}"]+l 
+                elif(l==")"):
+                    acc-=1
+                    d[f"S{e}"]=d[f"S{e}"]+l 
+                elif(acc>0):
+                    d[f"S{e}"]=d[f"S{e}"]+l
+                elif(acc==0):
+                    e+=1
+                    
+            if(d!={}):      
+                for elt in d:
+                    right=right.replace(d[elt],elt) 
+                        
+            lst=right.split("+")
+            for j in range(len(equations)):
+                for elt in lst:
+                    if(elt!="ε"):
+                        if(elt.split("L")[1] in fait.keys()):
+                            equations[i]=equations[i].replace(f"L{elt.split('L')[1]}",fait[f"{elt.split('L')[1]}"])
+                            print(equations[i])
+            
 
-"""
-  
-    deterministe:
-    Il possède un unique état initial.
-    Il ne possède pas d’epsilon-transitions.
-    Pour chaque état de cet automate, il existe au maximum une transition issue de cet état possédant le même symbole.
+                    
+                     
+            equations[i]=factorisation(equations[i])
+            print(equations[i])
+            equations[i]=arden(equations[i])
+            print(equations[i])
+            fait[left.split("L")[1]]=equations[i].split("=")[1]
+                                 
+                        
+                    
 
-    complet:
-    Depuis n’importe quel état, tous les symboles de l’alphabet doivent appartenir au moins une fois aux transitions (sortantes).
-    Pour obtenir un automate équivalent, complet, il suffit de créer un état “puits”, ou état “poubelle”. 
+            
 
-    emondé:
-    Un automate est dit émondé (ou utile) si tous les états de cet automate peuvent former au moins un mot du langage.
-    Par exemple : Cet automate est fini émondé. q0, q1 et q3 peuvent servir tous les 3 à la création du langage.
-"""
+        """
+        
+            deterministe:
+            Il possède un unique état initial.
+            Il ne possède pas depsilon-transitions.
+            Pour chaque état de cet automate, il existe au maximum une transition issue de cet état possédant le même symbole.
+
+            complet:
+            Depuis nimporte quel état, tous les symboles de lalphabet doivent appartenir au moins une fois aux transitions (sortantes).
+            Pour obtenir un automate équivalent, complet, il suffit de créer un état “puits”, ou état “poubelle”. 
+
+            emondé:
+            Un automate est dit émondé (ou utile) si tous les états de cet automate peuvent former au moins un mot du langage.
+            Par exemple : Cet automate est fini émondé. q0, q1 et q3 peuvent servir tous les 3 à la création du langage.
+        """

@@ -4,7 +4,13 @@ import csv
 
 automate=Automate()
 
- 
+automate.importCSV("testb.csv")
+
+
+
+automate.regex()
+
+exit(0)
 #menu central
 def menu():
     
