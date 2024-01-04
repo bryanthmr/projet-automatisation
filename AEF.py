@@ -575,7 +575,7 @@ class Automate:
         self.initial="S0"
         
         
-    def complement(self):
+    def complement(self): #à refaire
         new_final=set()
         for transition in self.transition:
             t1=transition[0]
@@ -799,7 +799,7 @@ class Automate:
         return True
 
 
-    def rendre_complet(self, nomCsv): # Création d'un état puit et rajout de ce dernier dans le fichier csv de l'automate pour le rendre complet.
+    def complet(self, nomCsv): # Création d'un état puit et rajout de ce dernier dans le fichier csv de l'automate pour le rendre complet.
 
         # On vérifie si l'automate est déjà complet.
         if self.complet(nomCsv):

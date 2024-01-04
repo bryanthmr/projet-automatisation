@@ -1,7 +1,7 @@
-�tat Initial ,S0
-�tat Final ,S5
+Initial State,S0
+Final State,S5
 
-Premier etat,Deuxieme etat,Entr�e
+First State,Second State,Event
 S1,S0,a
 S2,S0,b
 S0,S1,a

@@ -4,7 +4,7 @@ import csv
 
 
 
-automate=Automate
+automate=Automate()
 
  
 #menu central
@@ -75,13 +75,13 @@ def verif():
         case 2:
             nomCsv=input("Enter the name of the file you want to import: ")
             automate.importCSV(nomCsv)
-            if(automate.estComplet()):
+            if(automate.estComplet(nomCsv)):
                 print("This is a complete automaton.")
             else:
                 print("This is not a complete automaton.")
         
         case 3:
-            nomCsv=input("EEnter the name of the file you want to import: ")
+            nomCsv=input("Enter the name of the file you want to import: ")
             automate.importCSV(nomCsv)
             if(automate.estDeterministe()):
                 print("This is a deterministic automaton.")
@@ -115,7 +115,7 @@ def improve():
         case 1:
             nomCsv=input("Enter the name of the second file you want to import: ")
             automate.importCSV(nomCsv)
-            automate.rendre_complet(nomCsv)
+            automate.complet(nomCsv)
         case 2:
             nomCsv=input("Enter the name of the file you want to import: ")
             automate.importCSV(nomCsv)
