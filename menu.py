@@ -7,7 +7,7 @@ import csv
 automate=Automate()
 
  
-#menu central
+#main menu
 def menu():
     
     print("\n"*2)
@@ -58,10 +58,15 @@ def menu():
                 print("Automation import failed")
             
             print("Is 'abab' recognized ?")
-            #try:
-                #automate.verifiermot
-             
-            #except:
+            try:
+                if(verifier_mot(automate,"abab")):
+                    print("abb is recognized")
+                else:
+                    print("abb isn't recognized")
+                
+                
+            except:
+                print("word verification failed")
             
             print("Is the automaton complete ?")
             
@@ -93,12 +98,6 @@ def menu():
             except:
                 print("Automaton equivalence failed ")
             
-            print("Make the automaton complete")
-            try:
-                automate.complet("test")
-                print(f"Is automaton complete ? True = success False = fail: {automate.estComplet('test')}")
-            except:
-                print("Make complete the automaton failed")
                 
             print("Make the automaton deterministic")
             try:
@@ -234,23 +233,23 @@ def menu():
     menu()
         
 
-# menu pour acceder a toutes les verifications
+# verification menu
 def verif():
     print("\n"*5)
         
-    print("----------------------------------------------------------")
+    print("\033[38;5;120m----------------------------------------------------------\033[0m")
     print("                    Select an option :            ")
     print("1. If a word is recognized")
     print("2. If an automaton is complete")
     print("3. If an automaton is deterministic")
     print("4. If two automata are equivalent")
     print("5. Return")
-    print("----------------------------------------------------------")
+    print("\033[38;5;120m----------------------------------------------------------\033[0m")
 
     option = input("Select a number >> ")
     match(int(option)):
         case 1:
-            mot(automate, mot)
+            mot()
         case 2:
             nomCsv=input("Enter the name of the file you want to import: ")
             automate.importCSV(nomCsv)
@@ -281,26 +280,27 @@ def verif():
         case _:
             print("Invalid choice. Choose a valid option (1-6).")
 
-#menu pour acceder aux améliorations possibles
+#improvement menu
 def improve():
 
     print("\n"*5)
 
-    print("************************************************************")
+    print("\033[38;5;120m************************************************************\033[0m")
     print("                    Select an option :            ")
     print("1. Make a complet automaton")
     print("2. Make a deterministic automaton")
     print("3. Make a pruned automaton")
     print("4. Make a minimal automaton")
     print("5. Return")
-    print("************************************************************")
+    print("\033[38;5;120m************************************************************\033[0m")
 
-    option = input("Faites votre choix>> ")
+    option = input("Select a number>> ")
     match(int(option)):
         case 1:
             nomCsv=input("Enter the name of the second file you want to import: ")
             automate.importCSV(nomCsv)
             automate.complet(nomCsv)
+            
         case 2:
             nomCsv=input("Enter the name of the file you want to import: ")
             automate.importCSV(nomCsv)
@@ -308,7 +308,6 @@ def improve():
             with open("csv/"+nomCsv, mode='w', newline='') as file:
                 writer = csv.writer(file)
                     
-                # Écrire les données dans le fichier CSV
                 writer.writerow(['Initial State', automate.initial])
                 final= " ".join(automate.final)
                 writer.writerow(['Final State', final])
@@ -328,11 +327,11 @@ def improve():
         case _:
             print("Invalid choice. Choose a valid option (1-5).")
         
-    
+#operations menu
 def operation():
     print("\n"*5)
 
-    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+    print("\033[38;5;120m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\033[0m")
     print("                          Select an option :            ")
     print("1. Complementary")
     print("2. Mirror")
@@ -340,9 +339,9 @@ def operation():
     print("4. Concatenation")
     print("5. Regular Expression")
     print("6. Return")
-    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+    print("\033[38;5;120m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\033[0m")
     
-    option = input("Faites votre choix>> ")
+    option = input("Select a number>> ")
     
     match(int(option)):
         case 1:
@@ -354,7 +353,6 @@ def operation():
             with open("csv/"+sortie, mode='w', newline='') as file:
                 writer = csv.writer(file)
                     
-                # Écrire les données dans le fichier CSV
                 writer.writerow(['Initial State', automate.initial])
                 final= " ".join(automate.final)
                 writer.writerow(['Final State', final])
@@ -375,7 +373,6 @@ def operation():
             with open("csv/"+sortie, mode='w', newline='') as file:
                 writer = csv.writer(file)
                     
-                # Écrire les données dans le fichier CSV
                 writer.writerow(['Initial State', automate.initial])
                 final= " ".join(automate.final)
                 writer.writerow(['Final State', final])
@@ -399,7 +396,6 @@ def operation():
             with open("csv/"+sortie, mode='w', newline='') as file:
                 writer = csv.writer(file)
                     
-                # Écrire les données dans le fichier CSV
                 writer.writerow(['Initial State', automate.initial])
                 final= " ".join(automate.final)
                 writer.writerow(['Final State', final])
@@ -427,7 +423,6 @@ def operation():
             with open("csv/"+sortie, mode='w', newline='') as file:
                 writer = csv.writer(file)
                     
-                # Écrire les données dans le fichier CSV
                 writer.writerow(['Initial State', automate.initial])
                 final= " ".join(automate.final)
                 writer.writerow(['Final State', final])

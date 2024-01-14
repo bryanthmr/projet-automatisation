@@ -1,0 +1,7 @@
+Initial State,q0
+Final State,q2
+
+First State,Second State,Event
+q0,q1,a
+q1,q2,b
+q1,q1,b

@@ -4,25 +4,66 @@ import pandas as pd
 import networkx as nx
 import matplotlib.pyplot as plt
 
-
+#display the existing files
 def fichierExistence():
 
     csv_directory = os.path.expanduser("csv")
 
-    # On va demander à l'utilisateur de choisir son fichier :
-
-    # Vérifier si le répertoire existe
+    # verify if the directory exist
     if os.path.exists(csv_directory):
         print("\nHere are the existing files: ")
         
-    # La fonction os.listdir permet d'obtenir la liste des fichiers dans le répertoire en question sur linux et windows
+    # os.listdir to display all the files existing in the directory 
     files = os.listdir(csv_directory)
         
     # Afficher tous les fichiers
     for file in files:
         print(file) 
 
+#verification if the word belongs to the language
+def verifier_mot(automate, mot):
+    etat_courant = automate.initial
 
+    for symbole in mot:
+        for transition in automate.transition:
+            if (transition[0] == etat_courant) & (transition[2]==symbole):
+                etat_courant=transition[1]
+                break
+
+    # verification if the final state is reached
+    return etat_courant in automate.final
+
+def mot():
+        fichierExistence()
+     # ask the user to enter the name of the file
+        file_name = input("Enter the name of the file you want to use to verify your word : ")
+  
+        automate=Automate()
+        automate.importCSV(file_name)
+
+        while True:
+            # ask the user to enter a word
+            UserWord = input("Please enter a word: ")
+
+            # verify the function 
+            if verifier_mot(automate, UserWord):
+                print("This word belongs to the language")
+            else:
+                print("This word don't belongs to the language")
+
+            reponse = input("Do you want to test another word? (yes/no) : ")
+            if reponse.lower() != 'yes':
+                choix = input("Do you want to choose another file or return to the main menu? (file/menu) : ")
+                if choix.lower() == 'file':
+                    break  
+                elif choix.lower() == 'menu':
+                    return  
+                else:
+                    print("Invalid choice. Back to main menu.")
+                    return
+
+
+#applies the Arden's lemma to equations
 def arden(equation):
     right=equation.split("=")[1]
     left=equation.split("=")[0]
@@ -86,7 +127,7 @@ def arden(equation):
     return f"{left}={right}"
 
 
-
+#applies the factorisation rules to equations
 def factorisation(equation):
     
     right=equation.split("=")[1]
@@ -153,6 +194,7 @@ def factorisation(equation):
     
     return f"{left}={right}"
             
+#display the data in the format first state -> second state : event
 def Données(csv):
     print("\nYour current file data:")
 
@@ -169,7 +211,7 @@ def Données(csv):
 
     print(df_formate.to_string(index=False))      
             
-
+#define class Automate
 class Automate:
     
     
@@ -178,7 +220,7 @@ class Automate:
         self.final=[]
         self.transition=[]
         
-        
+     #import the automata choosen   
     def importCSV(self,filename):
         if not os.path.exists(f"csv/{filename}"):  # Vérifier si le fichier existe
             print("\n\033[91mThis file doesn't exist. Please choose another file.\033[0m")
@@ -205,59 +247,56 @@ class Automate:
                     
         return 1
 
-    
+    #create a new automata in a new file and store it in the directory 'csv'
     def create(self):
         
-        # Demander à l'utilisateur le nom du fichier + le mettre dans le dossier et faire les vérifications
         file_name = input("Enter the file name : ")
         csv_folder = "csv"
 
-        if not os.path.exists(csv_folder):  # Vérifie si le dossier csv existe sinon le crée
+        if not os.path.exists(csv_folder):  # verifies if the csv directory exist. If it doesn't exist, creates one
             os.mkdir(csv_folder)
         csv_file_path = os.path.join(csv_folder, file_name)
 
-        if os.path.exists(csv_file_path):  # Vérifie si le fichier existe
+        if os.path.exists(csv_file_path):  #verifies if the file exist
             print("\033[91mThis name already exists. Please choose another name.\n\033[0m")
             self.create()
         else:
-            with open(csv_file_path, mode='w', newline='') as file:  # Donne l'accès pour créer le fichier
+            with open(csv_file_path, mode='w', newline='') as file:  
                 writer = csv.writer(file)
             print("\033[38;5;83mYour file has been created successfully!\n\033[0m")
 
-            # Demander à l'utilisateur l'état initial et l'état final
             self.initial = input("Please enter the only initial state: ")
             
-            # Vérification si l'utilisateur a entré plusieurs valeurs avec ','
+            # ensure that there is a only one initial state
             if ',' in self.initial:
                 print("\033[91mError: A finite states automaton has only one initial state.\033[0m\n")
                 return
 
             self.final = input("\nPlease enter the final state (if several final states, please separate them with a space): ")
 
-            # Demander à l'utilisateur de saisir les transitions sous forme de matrice
+            # ask user to enter transitions as a matrix
             print("\nEnter the transitions of your automaton as a matrix with 'State1 State2 Event'(please separate elements with spaces)")   
             print("For example: q0 q1 a")
             print("Put 'ok' to finish.")
             print("Your turn:\n")
 
             
-            #on effectue une boucle tant qu'il n'appuie pas sur ok on continu
+            #loop until the user presses ok
             while True:
                 transition_input = input()
                 if transition_input == 'ok':
                     break
-                else: #et on regarde la forme 
+                else: 
                     transition_data = transition_input.split()
                     if len(transition_data) != 3:
                         print("\033[91mError: Invalid transition format.\033[0m")
                     else:
                         self.transition.append(transition_data)
             
-            # Créer un fichier CSV avec le nom spécifié pour enregistrer les données
+            # create csv file with the data
             with open(csv_file_path, mode='w', newline='') as file:
                 writer = csv.writer(file)
                 
-                # Écrire les données dans le fichier CSV
                 writer.writerow(['Initial State ', self.initial])
                 writer.writerow(['Final State ', self.final])
                 writer.writerow([])
@@ -266,36 +305,33 @@ class Automate:
                     writer.writerow(transition)   
             print("\n")
             print(f"\033[38;5;83mThe data has been saved in the file {file_name}.\033[0m")
+
             
-       
-#fonction pour supprimer des automates
+       #delete an automata
     def supprimer(self):
         
-        # Demande à l'utilisateur le nom du fichier CSV à modifier
         
         fichierExistence()
 
-        # toujours la possibilité de coder un menu contenant tous les fichier csv
         file_name = input("Enter the name of the file to delete: ")
         csv_folder = "csv"
         csv_file_path = os.path.join(csv_folder, file_name)
     
-        if os.path.exists(csv_file_path):  # Vérifier si le fichier existe
+    #ask a confirmation and delete if the answer is yes
+        if os.path.exists(csv_file_path):  
             confirmation = input(f"Are you sure you want to delete the file '{file_name}' ? (Yes/No) : ")
-            if confirmation.lower() == 'yes': #condition de verification
-                os.remove(csv_file_path)  # Supprimer le fichier
-                print(f"The file '{file_name}' has been deleted.")
+            if confirmation.lower() == 'yes': 
+                os.remove(csv_file_path) 
+                print(f"\033[38;5;83mThe file '{file_name}' has been deleted.\033[0m")
             else:
-                print(f"The file '{file_name}' hasn't been deleted.")
+                print(f"\n\033[91mThe file '{file_name}' hasn't been deleted.\033[0m")
         else:
             print("\n\033[91mThis file doesn't exist. Please choose another file to delete.\033[0m")
 
-#fonction pour modifier : fait apparaitre le sous menu 
-    # ...
-
+#modification
     def modifier(self):
         while True:
-            # Demande à l'utilisateur le nom du fichier CSV à modifier 
+            
             
             fichierExistence()
         
@@ -303,7 +339,7 @@ class Automate:
             csv_folder = "csv"
             csv_file_path = os.path.join(csv_folder, file_name)
 
-            if not os.path.exists(csv_file_path):  # Vérifier si le fichier existe
+            if not os.path.exists(csv_file_path): 
                 print("\033[91mThis file doesn't exist. Please choose another file.\033[0m")
                 self.modifier()
                 return
@@ -312,8 +348,10 @@ class Automate:
                 data = list(reader)
                 print(f"\nInitial state: {data[0][1]}")
                 print(f"Final state: {data[1][1]}")
+            #display the automata with his data
             Données(csv_file_path)
-            
+
+            #menu to select the modification to do
             print("\n"*1)
 
             print("\033[38;5;120m" + "//////////////////////////////////////////////////////////" + "\033[0m")
@@ -326,7 +364,7 @@ class Automate:
         
             option = input("Select a number >> ")
             if option == "1":
-                self.modifier_etat(csv_file_path)  # Passer le nom du fichier à la fonction
+                self.modifier_etat(csv_file_path) 
             elif option == "2":
                 self.ajout_ligne(csv_file_path)
             elif option == "3":
@@ -336,81 +374,70 @@ class Automate:
             else:
                 print("Invalid choice. Choose a valid option (1-4).")
 
-#fonction pour modifier les etats
+#modify the initial or final states only
     def modifier_etat(self, csv_file_path):
         # Lire le fichier CSV existant
         with open(csv_file_path, mode='r') as file:
             reader = csv.reader(file)
             data = list(reader)
 
-        # Vérifier si la liste data a au moins deux éléments (pour éviter l'erreur d'index)
         if len(data) < 2 or len(data[0]) < 2 or len(data[1]) < 2:
             print("The file doesn't contain the expected data.\n\n")
             return
-        # Affiche les données actuelles
         with open(csv_file_path, mode='r') as file:
             reader = csv.reader(file)
             data = list(reader)
             print(f"\nInitial state: {data[0][1]}")
             print(f"Final state: {data[1][1]}")
 
-        # Demande à l'utilisateur de saisir de nouvelles données
         print("\nEnter the new data (or press Enter to keep the current values)")
-        # Nouvel état initial
         new_initial_state = input(f"New initial state ({data[0][1]}): ")
         if new_initial_state:
             data[0][1] = new_initial_state
-         # Vérification si l'utilisateur a entré plusieurs valeurs avec ','
             if ',' in new_initial_state:
                 print("\033[91mError: A finite states automaton has only one initial state.\033[0m\n")
             if ' ' in new_initial_state:
                 print("\033[91mError: A finite states automaton has only one initial state.\033[0m\n")
                 return
             
-        # Nouvel état final
         new_final_state = input(f"New final state ({data[1][1]}): ")
         if new_final_state:
             data[1][1] = new_final_state
 
-        # Écrire les nouvelles données dans le fichier
         with open(csv_file_path, mode='w', newline='') as file:
             writer = csv.writer(file)
             writer.writerows(data)
         print("\n\033[92mData updated successfuly! \033[0m")
         return
     
-#fonction pour supprimer une ligne 
+#delete a line and ask the user to select the index of the line he wants to delete
     def supprimer_ligne(self, csv_file_path):
         with open(csv_file_path, mode='r') as file:
             reader = csv.reader(file)
             data = list(reader)
 
-        # Affiche les données à partir de la ligne 4 avec des indices
         print("\nYour current file data")
         for i, row in enumerate(data[3:], start=4):
             print(f"{i}. {' '.join(row)}")
 
-        # Demande à l'utilisateur de saisir l'indice de la ligne à supprimer
         while True:
             try:
                 index_delete = int(input("Enter the line number to delete (or press '0' to cancel) : "))
-                # Option pour annuler l'opération
                 if index_delete == 0:
                     print("Deletion canceled.")
                     return
 
-                # Vérifie si l'indice est valide
                 if 4 <= index_delete <= len(data):
-                    break  # Sort de la boucle si l'indice est valide
+                    break  
                 else:
                     print("\n\033[91mInvalid line number. Please enter a valid number or '0' to cancel.\033[0m\n")
             except ValueError:
                 print("\n\033[91mPlease enter a valid number or '0' to cancel.\033[0m\n")
 
-        # Supprime la ligne correspondante
+        
         data.pop(index_delete - 1)
 
-        # Écrire les nouvelles données dans le fichier
+      
         with open(csv_file_path, mode='w', newline='') as file:
             writer = csv.writer(file)
             writer.writerows(data)
@@ -419,45 +446,24 @@ class Automate:
         return
     
 
-
+#add a line in the file and ask the user to give the new transitions
     def ajout_ligne(self, csv_file_path):
-        # Lire le fichier CSV existant
+       
         with open(csv_file_path, mode='r') as file:
             reader = csv.reader(file)
             data = list(reader)
 
-        # Affiche les données à partir de la ligne 4 avec des indices
         print("\nYour current file data : ")
         for i, row in enumerate(data[3:], start=4):
-            print(f"{i}. {' '.join(row)}")
-
-        # Demande à l'utilisateur de saisir l'indice de la ligne à ajouter
-        while True:
-            try:
-                index_add = int(input("Enter the line number to add (or press '0' to cancel) :  "))
-
-                # Option pour annuler l'opération
-                if index_add == 0:
-                    print("\nAddition canceled.")
-                    return
-
-                # Vérifie si l'indice est valide
-                if 4 <= index_add <= len(data) + 1:
-                    break  # Sort de la boucle si l'indice est valide
-                else:
-                    print("\n\033[91mInvalid line number. Please enter a valid number or '0' to cancel.\033[0m\n")
-            except ValueError:
-                print("\n\033[91mPlease enter a valid number or '0' to cancel.\033[0m\n")
+            print(f"{' '.join(row)}")
 
         new_line = []
         for col_name in ["First State", "Second State", "Event"]:
             new_value = input(f"Enter the value for column '{col_name}' : ")
             new_line.append(new_value)
 
-        # Ajoute la nouvelle ligne à la position spécifiée
-        data.insert(index_add - 1, new_line)
+        data.insert(i, new_line)
 
-        # Écrire les nouvelles données dans le fichier
         with open(csv_file_path, mode='w', newline='') as file:
             writer = csv.writer(file)
             writer.writerows(data)
@@ -466,7 +472,7 @@ class Automate:
         return
 
 
-
+#verify if the automata is deterministic
     def estDeterministe(self):
         etats=set()
         symbole=set()
@@ -497,7 +503,6 @@ class Automate:
                 if(mat_trans[elt].get(car,"nothing")!="nothing"):
                     if(len(mat_trans[elt][car])>1):
                         verif=False
-                        #print(f"L'automate n'est pas déterministe : {elt} -> {mat_trans[elt][car]} : {car} ")
                         break
 
 
@@ -506,7 +511,7 @@ class Automate:
 
 
     
-
+#make an automata deterministic 
     def deterministe(self):
         mat_trans={}
         lst={}
@@ -581,8 +586,8 @@ class Automate:
         
         self.initial="S0"
         
-        
-    def complement(self): #à refaire
+  #create the complementary of the automate      
+    def complement(self): 
         new_final=set()
         for transition in self.transition:
             t1=transition[0]
@@ -594,7 +599,7 @@ class Automate:
         
         self.final=list(new_final)
                       
-    
+    #create the mirror of the automate      
     def miroir(self):
         new_transition=[]
 
@@ -615,8 +620,34 @@ class Automate:
             self.final=[self.initial]
             self.initial=final
             
-# CONCATENATION
+# concatenate two automaton
     def __add__(self,automate2):
+        
+        lstState={}
+        i=0
+        for transition in self.transition:
+            if(lstState.get(transition[0],"nothing")=="nothing"):
+                lstState[transition[0]]=f"C{i}"
+                i=1
+            if(lstState.get(transition[1],"nothing")=="nothing"):     
+                lstState[transition[1]]=f"C{i}"
+                i+=1
+        
+        new_final=[]
+        self.initial=self.initial.replace(self.initial,lstState[self.initial])
+        for final in self.final:
+            new_final.append(final.replace(final,lstState[final]))
+        
+        self.final=new_final
+        
+        new_trans=[]
+        for transition in self.transition:
+            transition[0]=transition[0].replace(transition[0],lstState[transition[0]])
+            transition[1]=transition[1].replace(transition[1],lstState[transition[1]])
+            new_trans.append(transition)
+        
+        self.transition=new_trans    
+        
         initial=self.initial
         final=automate2.final
         
@@ -641,7 +672,7 @@ class Automate:
         automate3.transition=transition
         return automate3
 
-
+#convert an automata in an equations system
     
     def init_equation(self,etat,fait,d,i,equations):
         for t in self.transition:
@@ -700,7 +731,8 @@ class Automate:
 
         
         return equations
-    
+
+ #generate a regular expression from the equations system   
     def regex(self):
         
         
@@ -777,39 +809,35 @@ class Automate:
         
         return(eq.split("=")[1])
     
+#verifies if an automata is complete
+    
     def estComplet(self, nomCsv):
         transitions = {}
         etats = []
         alphabet = []
 
-        # Lire le fichier CSV
         with open("csv/"+nomCsv, 'r') as csv_file:
             csv_reader = csv.reader(csv_file)
 
-            # Ignorer les quatre premières lignes
+     
             for _ in range(4):
                 next(csv_reader)
 
-            # Parcourir les lignes du fichier CSV à partir de la ligne 5
             for row in csv_reader:
                 premier_etat = row[0]
                 entree = row[2]
 
-                # Ajouter le premier état de la ligne à la liste des états en évitant les doublons avec la condition if
                 if premier_etat not in etats:
                     etats.append(premier_etat)
 
-                # Ajouter le symbole d'entrée à la liste de l'alphabet (sans doublons)
-                if entree not in alphabet: # Condition qui permet d'éviter les doublons
+                if entree not in alphabet: 
                     alphabet.append(entree)
 
-                # Ajouter les transitions à la liste des transitions
                 if premier_etat not in transitions:
                     transitions[premier_etat] = []
 
                 transitions[premier_etat].append(entree)
 
-        # Vérifier si chaque état a une transition pour chaque symbole de l'alphabet
         for etat in etats:
             if etat not in transitions:
                 return False
@@ -818,11 +846,11 @@ class Automate:
 
         return True
 
-
+#makes an automata complete
     def complet(self, nomCsv): # Création d'un état puit et rajout de ce dernier dans le fichier csv de l'automate pour le rendre complet.
 
         # On vérifie si l'automate est déjà complet.
-        if self.complet(nomCsv):
+        if self.estComplet(nomCsv):
             print("L'automate est déjà complet.") # Vérification peut être inutile car c'est le but de la fonction de rendre complet, à voir pour sup ou pas.
 
         transitions = {}
@@ -887,18 +915,17 @@ class Automate:
                 if not transition[0].startswith("puit"):
                     writer.writerow(transition)
 
+#gives an only well number for transitions of a particular state
+
     def numero_puit(self, etat):
-        # On extrait le numéro du puit à partir du nom de l'état 
-        # Comme ça on aura un état q et un état puit avec le même numéro pour les associer visuellement
         return int(etat[1:]) + 1 if etat[0] == 'q' else 1                      
                         
     
-    # PRODUIT
+ #product of two automaton
     def __mul__(self, automate2):
         i=0
         lst={}
         
-        # Création des nouveaux états initiaux et finaux
         initial = (self.initial, automate2.initial)
         lst[initial]=f'S{i}'
         i+=1
@@ -912,7 +939,6 @@ class Automate:
                         i+=1
                 final.append(lst[(f1, f2)])
 
-        # Création des nouvelles transitions
         transition = []
         for t1 in self.transition:
             for t2 in automate2.transition:
@@ -928,20 +954,22 @@ class Automate:
                 
        
 
-        # Création de l'automate résultant
         automate_result = Automate()
         automate_result.initial = initial
         automate_result.final = final
         automate_result.transition = transition
 
         return automate_result
+    
 
+    #verify if the regular expressions of the two automaton are the same
     def equivalence(self,automate):
         return self.regex()==automate.regex()
     
+    #display the automata selected
+    
     def afficher(self):
         while True:
-            # Demande à l'utilisateur le nom du fichier CSV à modifier 
             
             fichierExistence()
         
@@ -956,27 +984,25 @@ class Automate:
 
                 G = nx.DiGraph()
 
-                # Lire le fichier CSV et ajouter les transitions au graphe
                 with open(csv_file_path, 'r') as file:
                     reader = csv.reader(file)
-                    next(reader)  # Ignorer la première ligne
+                    next(reader)  
                     for row in reader:
                         if len(row) == 3:
                             G.add_edge(row[0], row[1], label=row[2])
 
-                # Ajouter des attributs aux nœuds pour les états initiaux et finaux
                 with open(csv_file_path, 'r') as file:
                     reader = csv.reader(file)
-                    next(reader)  # Ignorer la première ligne
+                    next(reader)  
                     for row in reader:
                         if len(row) == 2:
                             if row[0] == 'Initial State':
                                 G.nodes[row[1]]['initial'] = True
                             elif row[0] == 'Final State':
-                                G.nodes[row[1]]['final'] = True
+                                for i in range(len(row[1].split(' '))):
+                                    G.nodes[row[1].split(' ')[i]]['final'] = True
 
-                # Dessiner le graphe
-                pos = nx.circular_layout(G)  # Ajustez l'algorithme de disposition si nécessaire
+                pos = nx.circular_layout(G)  
                 labels = nx.get_edge_attributes(G, 'label')
                 initial_states = [node for node, data in G.nodes(data=True) if 'initial' in data and data['initial']]
                 final_states = [node for node, data in G.nodes(data=True) if 'final' in data and data['final']]
@@ -987,7 +1013,7 @@ class Automate:
                 nx.draw_networkx_labels(G, pos)
 
                 edge_labels = {(u, v): labels[(u, v)] for u, v in G.edges}
-                edge_label_pos = {k: (v[0], v[1] + 0.1) for k, v in pos.items()}  # Ajuster la position en y
+                edge_label_pos = {k: (v[0], v[1] + 0.1) for k, v in pos.items()}  
                 nx.draw_networkx_edge_labels(G, edge_label_pos, edge_labels=edge_labels)
 
                 plt.show()          
