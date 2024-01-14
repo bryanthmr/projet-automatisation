@@ -360,7 +360,7 @@ class Automate:
 
         return True
     
-    def complet(self, nomCsv):
+    def estComplet(self, nomCsv):
         transitions = {}
         etats = []
         alphabet = []
@@ -402,10 +402,10 @@ class Automate:
         return True
 
 
-    def rendre_complet(self, nomCsv): # Création d'un état puit et rajout de ce dernier dans le fichier csv de l'automate pour le rendre complet.
+    def complet(self, nomCsv): # Création d'un état puit et rajout de ce dernier dans le fichier csv de l'automate pour le rendre complet.
 
         # On vérifie si l'automate est déjà complet.
-        if self.complet(nomCsv):
+        if self.estComplet(self, nomCsv):
             print("L'automate est déjà complet.") # Vérification peut être inutile car c'est le but de la fonction de rendre complet, à voir pour sup ou pas.
 
         transitions = {}
