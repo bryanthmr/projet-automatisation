@@ -20,7 +20,8 @@ def menu():
     print("\033[38;5;120m|\033[0m 5. ~Improvement                            \033[38;5;120m|\033[0m")
     print("\033[38;5;120m|\033[0m 6. ~Operation                              \033[38;5;120m|\033[0m")
     print("\033[38;5;120m|\033[0m 7. ~Display                                \033[38;5;120m|\033[0m")
-    print("\033[38;5;120m|\033[0m 8. ~Exit                                   \033[38;5;120m|\033[0m")
+    print("\033[38;5;120m|\033[0m 8. ~Unit Tests                             \033[38;5;120m|\033[0m")
+    print("\033[38;5;120m|\033[0m 9. ~Exit                                   \033[38;5;120m|\033[0m")
     print("\033[38;5;120m└============================================┘\033[0m")
 
     try:
@@ -49,6 +50,183 @@ def menu():
         case 7:
             automate.afficher()
         case 8:
+            print("Automaton's Importation")
+            try:
+                automate.importCSV("test")
+                print("Automaton import successed")
+            except:
+                print("Automation import failed")
+            
+            print("Is 'abab' recognized ?")
+            #try:
+                #automate.verifiermot
+             
+            #except:
+            
+            print("Is the automaton complete ?")
+            
+            try:
+                if(automate.estComplet("test")):
+                    print("automaton is complete")
+                else:
+                    print("automaton isn't complete")
+            except:
+                print("Complete automaton verification failed ")
+                
+            print("Is the automaton deterministic ?")
+            
+            try:
+                if(automate.estDeterministe()):
+                    print("automaton is deterministic")
+                else:
+                    print("automaton isn't deterministic")
+            except:
+                print("Deterministic automaton verification failed ")
+               
+            print("Is the automaton and itself are equivalent (supposed to be true)?")
+            
+            try:
+                if(automate.equivalence(automate)):
+                    print("automaton and itself are equivalent")
+                else:
+                    print("automaton and itself aren't equivalent(failed)")
+            except:
+                print("Automaton equivalence failed ")
+            
+            print("Make the automaton complete")
+            try:
+                automate.complet("test")
+                print(f"Is automaton complete ? True = success False = fail: {automate.estComplet('test')}")
+            except:
+                print("Make complete the automaton failed")
+                
+            print("Make the automaton deterministic")
+            try:
+                automate1=Automate()
+                automate1.importCSV("test")
+                automate1.deterministe()
+                print(f"Is automaton deterministic ? True = success False = fail: {automate1.estDeterministe()}")
+                with open("csv/testDeterministic", mode='w', newline='') as file:
+                    writer = csv.writer(file)
+                        
+                    # Écrire les données dans le fichier CSV
+                    writer.writerow(['Initial State', automate1.initial])
+                    final= " ".join(automate1.final)
+                    writer.writerow(['Final State', final])
+                    writer.writerow([])
+                    writer.writerow(['First State', 'Second State', 'Event'])
+                    for transition in automate1.transition:
+                        writer.writerow(transition)   
+                    print("\n")
+                    print(f"Data has been saved in csv/testDeterministic.")
+            except:
+                print("Make deterministic the automaton failed")
+            
+            print("Generating in csv/TestComplementary the complementary of our automaton")
+            try:
+                automate.complement()
+                with open("csv/TestComplementary", mode='w', newline='') as file:
+                    writer = csv.writer(file)
+                        
+                    # Écrire les données dans le fichier CSV
+                    writer.writerow(['Initial State', automate.initial])
+                    final= " ".join(automate.final)
+                    writer.writerow(['Final State', final])
+                    writer.writerow([])
+                    writer.writerow(['First State', 'Second State', 'Event'])
+                    for transition in automate.transition:
+                        writer.writerow(transition)   
+                    print("\n")
+                    print(f"Data has been saved in csv/TestComplementary.")
+                print("Complementary of the FSA saved successfully.")
+            except:
+                print("Complementary failed")
+            
+            print("Generating in csv/testMirror the mirror of our automaton")
+            try:
+                automate.miroir()
+                with open("csv/TestMirror", mode='w', newline='') as file:
+                    writer = csv.writer(file)
+                        
+                    # Écrire les données dans le fichier CSV
+                    writer.writerow(['Initial State', automate.initial])
+                    final= " ".join(automate.final)
+                    writer.writerow(['Final State', final])
+                    writer.writerow([])
+                    writer.writerow(['First State', 'Second State', 'Event'])
+                    for transition in automate.transition:
+                        writer.writerow(transition)   
+                    print("\n")
+                    print(f"Data has been saved in csv/TestMirror.")
+                print("Mirror of the FSA saved successfully.")
+            except:
+                print("Mirror failed")
+                
+            print("Generating in csv/testProduct the product between mirror and complementary")
+            try:
+                automate1=Automate()
+                automate2=Automate()
+                automate3=Automate()
+                automate2.importCSV("TestMirror")
+                automate3.importCSV("TestComplementary")
+                automate1=automate2*automate3
+                with open("csv/testProduct", mode='w', newline='') as file:
+                    writer = csv.writer(file)
+                        
+                    # Écrire les données dans le fichier CSV
+                    writer.writerow(['Initial State', automate1.initial])
+                    final= " ".join(automate1.final)
+                    writer.writerow(['Final State', final])
+                    writer.writerow([])
+                    writer.writerow(['First State', 'Second State', 'Event'])
+                    for transition in automate1.transition:
+                        writer.writerow(transition)   
+                    print("\n")
+                    print(f"Data has been saved in the file csv/testProduct.")
+                print("Product saved successfully.")
+            
+            except:
+                print("Product failed")        
+                
+            print("Generating in csv/testConcatenation the concatenation of mirror automaton and the complementary")
+            try:
+                
+                automate2.importCSV("TestComplementary")
+                automate3.importCSV("TestMirror")
+                
+                
+                automate1=automate2+automate3
+                
+                
+                with open("csv/testConcatenation", mode='w', newline='') as file:
+                    writer = csv.writer(file)
+                        
+                    # Écrire les données dans le fichier CSV
+                    writer.writerow(['Initial State', automate1.initial])
+                    final= " ".join(automate1.final)
+                    writer.writerow(['Final State', final])
+                    writer.writerow([])
+                    writer.writerow(['First State', 'Second State', 'Event'])
+                    for transition in automate1.transition:
+                        writer.writerow(transition)   
+                    print("\n")
+                    print(f"Data has been saved in the file csv/testConcatenation.")
+                print("Concatenation saved successfully.")
+            
+            except:
+                print("concatenation failed")
+                
+            print("Generating regular expression for the automata test ")
+            try:
+                automate.importCSV("test")
+                print("Regular expression : "+automate.regex())
+            except:
+                print("Regular expression failed")
+
+            
+                
+            
+        case 9:
             print("Goodbye !")
             exit(0)
         case _:
@@ -142,9 +320,9 @@ def improve():
                 print(f"Data has been saved in the file {nomCsv}.")
             print("Your FSA is now deterministic!")
         case 3:
-            automate.emonde()
+            print("Not available")
         case 4:
-            automate.minimal()
+            print("Not available")
         case 5:
             menu()
         case _:

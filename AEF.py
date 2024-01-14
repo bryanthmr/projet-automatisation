@@ -714,7 +714,7 @@ class Automate:
           
             
             
-        print(equations)
+        
         fait={}
         eq=""
         for i in range(len(equations)-1,-1,-1):
