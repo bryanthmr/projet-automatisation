@@ -27,6 +27,8 @@ def arden(equation):
     right=equation.split("=")[1]
     left=equation.split("=")[0]
     
+    if("+" not in right):
+        return equation
     
     acc=0
     d={}
@@ -86,8 +88,13 @@ def arden(equation):
 
 
 def factorisation(equation):
+    
     right=equation.split("=")[1]
     left=equation.split("=")[0]
+    
+    if("+" not in right):
+        equation=equation.replace("ε","")
+        return equation
        
     
     acc=0
@@ -700,62 +707,75 @@ class Automate:
         equations=self.init_equation(self.initial,[],{},0,[])
         for i in range(len(equations)):
         
-            if("ε" in equations[i]):
+            if("ε+" in equations[i] or "+ε" in equations[i]):
                 equations[i]=equations[i].replace("ε+","")
                 equations[i]=equations[i].replace("+ε","")
                 equations[i]=equations[i]+"+ε"
           
             
             
-       
+        print(equations)
         fait={}
+        eq=""
         for i in range(len(equations)-1,-1,-1):
-
-            
-            right=equations[i].split("=")[1]
-            left=equations[i].split("=")[0]
             
             
-            acc=0
-            d={}
-            e=0
-            for l in right:
-                if(l=="("):
-                    acc+=1
-                    if(d.get(f"S{e}","nothing")=="nothing"):
-                        d[f"S{e}"]=l
-                    else:
+            for e in equations:
+                if((e.split("=")[0]).split("L")[1]==f"{i}"):
+                    eq=e
+            
+            if(eq):
+                
+                
+                right=eq.split("=")[1]
+                left=eq.split("=")[0]
+                
+                
+                acc=0
+                d={}
+                e=0
+                for l in right:
+                    if(l=="("):
+                        acc+=1
+                        if(d.get(f"S{e}","nothing")=="nothing"):
+                            d[f"S{e}"]=l
+                        else:
+                            d[f"S{e}"]=d[f"S{e}"]+l 
+                    elif(l==")"):
+                        acc-=1
                         d[f"S{e}"]=d[f"S{e}"]+l 
-                elif(l==")"):
-                    acc-=1
-                    d[f"S{e}"]=d[f"S{e}"]+l 
-                elif(acc>0):
-                    d[f"S{e}"]=d[f"S{e}"]+l
-                elif(acc==0):
-                    e+=1
-                    
-            if(d!={}):      
-                for elt in d:
-                    right=right.replace(d[elt],elt) 
+                    elif(acc>0):
+                        d[f"S{e}"]=d[f"S{e}"]+l
+                    elif(acc==0):
+                        e+=1
                         
-            lst=right.split("+")
-            for j in range(len(equations)):
-                for elt in lst:
-                    if(elt!="ε"):
-                        if(elt.split("L")[1] in fait.keys()):
-                            equations[i]=equations[i].replace(f"L{elt.split('L')[1]}",fait[f"{elt.split('L')[1]}"])
+                if(d!={}):      
+                    for elt in d:
+                        right=right.replace(d[elt],elt) 
                             
-            
+                lst=right.split("+")
+                for j in range(len(equations)):
+                    for elt in lst:
+                        if(elt!="ε"):
+                            if(elt.split("L")[1] in fait.keys()):
+                                eq=eq.replace(f"L{elt.split('L')[1]}",fait[f"{elt.split('L')[1]}"])
+                                
+                
+              
+                        
+                        
+                eq=factorisation(eq)
 
-                    
-                     
-            equations[i]=factorisation(equations[i])
-          
-            equations[i]=arden(equations[i])
-          
-            fait[left.split("L")[1]]=equations[i].split("=")[1]
+                
+                
+                eq=arden(eq)
+                
+                
+            
+                fait[left.split("L")[1]]=eq.split("=")[1]
+            
         
-        print(equations[0].split("=")[1])
+        return(eq.split("=")[1])
     
     def estComplet(self, nomCsv):
         transitions = {}
@@ -916,73 +936,65 @@ class Automate:
 
         return automate_result
 
+    def equivalence(self,automate):
+        return self.regex()==automate.regex()
     
-    def affichage(self):
+    def afficher(self):
         while True:
             # Demande à l'utilisateur le nom du fichier CSV à modifier 
             
             fichierExistence()
         
             file_name = input("\nEnter the name of the file to display: ")
-            csv_folder = "csv"
-            csv_file_path = f"{csv_folder}/{file_name}"
-
-            if not os.path.exists(csv_file_path):  # Vérifier si le fichier existe
-                print("\033[91mThis file doesn't exist. Please choose another file.\033[0m")
-                return
-
-            G = nx.DiGraph()
-
-            # Lire le fichier CSV et ajouter les transitions au graphe
-            with open(self, 'r') as file:
-                reader = csv.reader(file)
-                next(reader)  # Ignorer la première ligne
-                for row in reader:
-                    if len(row) == 3:
-                        G.add_edge(row[0], row[1], label=row[2])
-
-            # Ajouter des attributs aux nœuds pour les états initiaux et finaux
-            with open(self, 'r') as file:
-                reader = csv.reader(file)
-                next(reader)  # Ignorer la première ligne
-                for row in reader:
-                    if len(row) == 2:
-                        if row[0] == 'Initial State':
-                            G.nodes[row[1]]['initial'] = True
-                        elif row[0] == 'Final State':
-                            G.nodes[row[1]]['final'] = True
-
-            # Dessiner le graphe
-            pos = nx.circular_layout(G)  # Ajustez l'algorithme de disposition si nécessaire
-            labels = nx.get_edge_attributes(G, 'label')
-            initial_states = [node for node, data in G.nodes(data=True) if 'initial' in data and data['initial']]
-            final_states = [node for node, data in G.nodes(data=True) if 'final' in data and data['final']]
-
-            nx.draw_networkx_nodes(G, pos, node_size=500,  nodelist=set(G.nodes) - set(initial_states + final_states))
+            if(file_name):
+                csv_folder = "csv"
+                csv_file_path = f"{csv_folder}/{file_name}"
             
-            nx.draw_networkx_edges(G, pos)
-            nx.draw_networkx_labels(G, pos)
+                if not os.path.exists(csv_file_path):  # Vérifier si le fichier existe
+                    print("\033[91mThis file doesn't exist. Please choose another file.\033[0m")
+                    break
 
-            edge_labels = {(u, v): labels[(u, v)] for u, v in G.edges}
-            edge_label_pos = {k: (v[0], v[1] + 0.1) for k, v in pos.items()}  # Ajuster la position en y
-            nx.draw_networkx_edge_labels(G, edge_label_pos, edge_labels=edge_labels)
+                G = nx.DiGraph()
 
-            plt.show()          
+                # Lire le fichier CSV et ajouter les transitions au graphe
+                with open(csv_file_path, 'r') as file:
+                    reader = csv.reader(file)
+                    next(reader)  # Ignorer la première ligne
+                    for row in reader:
+                        if len(row) == 3:
+                            G.add_edge(row[0], row[1], label=row[2])
 
+                # Ajouter des attributs aux nœuds pour les états initiaux et finaux
+                with open(csv_file_path, 'r') as file:
+                    reader = csv.reader(file)
+                    next(reader)  # Ignorer la première ligne
+                    for row in reader:
+                        if len(row) == 2:
+                            if row[0] == 'Initial State':
+                                G.nodes[row[1]]['initial'] = True
+                            elif row[0] == 'Final State':
+                                G.nodes[row[1]]['final'] = True
+
+                # Dessiner le graphe
+                pos = nx.circular_layout(G)  # Ajustez l'algorithme de disposition si nécessaire
+                labels = nx.get_edge_attributes(G, 'label')
+                initial_states = [node for node, data in G.nodes(data=True) if 'initial' in data and data['initial']]
+                final_states = [node for node, data in G.nodes(data=True) if 'final' in data and data['final']]
+
+                nx.draw_networkx_nodes(G, pos, node_size=500,  nodelist=set(G.nodes) - set(initial_states + final_states))
+                
+                nx.draw_networkx_edges(G, pos)
+                nx.draw_networkx_labels(G, pos)
+
+                edge_labels = {(u, v): labels[(u, v)] for u, v in G.edges}
+                edge_label_pos = {k: (v[0], v[1] + 0.1) for k, v in pos.items()}  # Ajuster la position en y
+                nx.draw_networkx_edge_labels(G, edge_label_pos, edge_labels=edge_labels)
+
+                plt.show()          
+            else:
+                break
             
-
-        """
+            
         
-            deterministe:
-            Il possède un unique état initial.
-            Il ne possède pas depsilon-transitions.
-            Pour chaque état de cet automate, il existe au maximum une transition issue de cet état possédant le même symbole.
+            
 
-            complet:
-            Depuis nimporte quel état, tous les symboles de lalphabet doivent appartenir au moins une fois aux transitions (sortantes).
-            Pour obtenir un automate équivalent, complet, il suffit de créer un état “puits”, ou état “poubelle”. 
-
-            emondé:
-            Un automate est dit émondé (ou utile) si tous les états de cet automate peuvent former au moins un mot du langage.
-            Par exemple : Cet automate est fini émondé. q0, q1 et q3 peuvent servir tous les 3 à la création du langage.
-        """
