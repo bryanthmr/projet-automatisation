@@ -2,12 +2,12 @@ from AEF import *
 import csv
 
 
+
+
 automate=Automate()
 
-
-
  
-#menu central
+#main menu
 def menu():
     
     print("\n"*2)
@@ -23,8 +23,10 @@ def menu():
     print("\033[38;5;120m|\033[0m 8. ~Exit                                   \033[38;5;120m|\033[0m")
     print("\033[38;5;120m└============================================┘\033[0m")
 
-
-    option = input("Select a number >> ")
+    try:
+        option = int(input("Select a number >> "))
+    except:
+        menu()
     match(int(option)):
         case 1:
             print("\nWelcome in Creation!\n")
@@ -45,7 +47,7 @@ def menu():
             print("\nWelcome in Operation!")
             operation()
         case 7:
-            automate.affichage()
+            automate.afficher()
         case 8:
             print("Goodbye !")
             exit(0)
@@ -54,66 +56,73 @@ def menu():
     menu()
         
 
-# menu pour acceder a toutes les verifications
+# verification menu
 def verif():
     print("\n"*5)
         
-    print("----------------------------------------------------------")
+    print("\033[38;5;120m----------------------------------------------------------\033[0m")
     print("                    Select an option :            ")
     print("1. If a word is recognized")
     print("2. If an automaton is complete")
     print("3. If an automaton is deterministic")
-    print("4. If all cycles are unitary")
-    print("5. If two automata are equivalent")
-    print("6. Return")
-    print("----------------------------------------------------------")
+    print("4. If two automata are equivalent")
+    print("5. Return")
+    print("\033[38;5;120m----------------------------------------------------------\033[0m")
 
     option = input("Select a number >> ")
     match(int(option)):
         case 1:
-            mot(automate, mot)
+            mot()
         case 2:
             nomCsv=input("Enter the name of the file you want to import: ")
             automate.importCSV(nomCsv)
-            if(automate.estComplet()):
+            if(automate.estComplet(nomCsv)):
                 print("This is a complete automaton.")
             else:
                 print("This is not a complete automaton.")
         
         case 3:
-            nomCsv=input("EEnter the name of the file you want to import: ")
+            nomCsv=input("Enter the name of the file you want to import: ")
             automate.importCSV(nomCsv)
             if(automate.estDeterministe()):
                 print("This is a deterministic automaton.")
             else:
                 print("This is not a deterministic automaton.")
         case 4:
-            automate.unitaire()
+            automate2=Automate()
+            nomCsv=input("Enter the name of the file 1 you want to import: ")
+            automate.importCSV(nomCsv)
+            nomCsv=input("Enter the name of the file 2 you want to import: ")
+            automate2.importCSV(nomCsv)
+            if(automate.equivalence(automate2)):
+                print("These Automata are equivalents")
+            else:
+                print("These Automata aren't equivalents")
         case 5:
-            automate.equivalence()
-        case 6:
             menu()       
         case _:
             print("Invalid choice. Choose a valid option (1-6).")
 
-#menu pour acceder aux améliorations possibles
+#improvement menu
 def improve():
 
     print("\n"*5)
 
-    print("************************************************************")
+    print("\033[38;5;120m************************************************************\033[0m")
     print("                    Select an option :            ")
     print("1. Make a complet automaton")
     print("2. Make a deterministic automaton")
     print("3. Make a pruned automaton")
     print("4. Make a minimal automaton")
     print("5. Return")
-    print("************************************************************")
+    print("\033[38;5;120m************************************************************\033[0m")
 
     option = input("Faites votre choix>> ")
     match(int(option)):
         case 1:
-            AEF_complet()
+            nomCsv=input("Enter the name of the second file you want to import: ")
+            automate.importCSV(nomCsv)
+            automate.complet(nomCsv)
         case 2:
             nomCsv=input("Enter the name of the file you want to import: ")
             automate.importCSV(nomCsv)
@@ -121,7 +130,6 @@ def improve():
             with open("csv/"+nomCsv, mode='w', newline='') as file:
                 writer = csv.writer(file)
                     
-                # Écrire les données dans le fichier CSV
                 writer.writerow(['Initial State', automate.initial])
                 final= " ".join(automate.final)
                 writer.writerow(['Final State', final])
@@ -141,18 +149,19 @@ def improve():
         case _:
             print("Invalid choice. Choose a valid option (1-5).")
         
-    
+#operations menu
 def operation():
     print("\n"*5)
 
-    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+    print("\033[38;5;120m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\033[0m")
     print("                          Select an option :            ")
     print("1. Complementary")
     print("2. Mirror")
     print("3. Product")
     print("4. Concatenation")
-    print("5. Return")
-    print("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+    print("5. Regular Expression")
+    print("6. Return")
+    print("\033[38;5;120m~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\033[0m")
     
     option = input("Faites votre choix>> ")
     
@@ -166,7 +175,6 @@ def operation():
             with open("csv/"+sortie, mode='w', newline='') as file:
                 writer = csv.writer(file)
                     
-                # Écrire les données dans le fichier CSV
                 writer.writerow(['Initial State', automate.initial])
                 final= " ".join(automate.final)
                 writer.writerow(['Final State', final])
@@ -177,6 +185,7 @@ def operation():
                 print("\n")
                 print(f"Data has been saved in the file {sortie}.")
             print("Complementary of the FSA saved successfully.")
+            
         case 2:
             automate=Automate()
             nomCsv=input("Enter the name of the file you want to import: ")
@@ -186,7 +195,6 @@ def operation():
             with open("csv/"+sortie, mode='w', newline='') as file:
                 writer = csv.writer(file)
                     
-                # Écrire les données dans le fichier CSV
                 writer.writerow(['Initial State', automate.initial])
                 final= " ".join(automate.final)
                 writer.writerow(['Final State', final])
@@ -210,7 +218,6 @@ def operation():
             with open("csv/"+sortie, mode='w', newline='') as file:
                 writer = csv.writer(file)
                     
-                # Écrire les données dans le fichier CSV
                 writer.writerow(['Initial State', automate.initial])
                 final= " ".join(automate.final)
                 writer.writerow(['Final State', final])
@@ -238,7 +245,6 @@ def operation():
             with open("csv/"+sortie, mode='w', newline='') as file:
                 writer = csv.writer(file)
                     
-                # Écrire les données dans le fichier CSV
                 writer.writerow(['Initial State', automate.initial])
                 final= " ".join(automate.final)
                 writer.writerow(['Final State', final])
@@ -250,7 +256,13 @@ def operation():
                 print(f"Data has been saved in the file {sortie}.")
             print("Concatenation saved successfully.")
         case 5:
+            automate=Automate()
+            nomCsv=input("Enter the name of the file you want to import: ")
+            automate.importCSV(nomCsv)
+            print(automate.regex())
+        case 6:
             menu()
         case _:
             print("Invalid choice. Choose a valid option (1-5).")
             
+menu()
