@@ -1,0 +1,41 @@
+TO DO LIST 
+
+[] Menu central ( crée, modifier, supprimer, verifier, ameliorer, exit)
+  --> créer : 
+      [] mettre au bon format : "q..." 
+
+  --> Modifier : 
+      [X] faire la fonction ajouter et supprimer les transitions 
+l'utilisateur a la possibilité de choisir sa ligne a supprimer et sa ligne pour rajouter les transitions
+      []   Rediriger l'option Retour vers le menu principal(Erreur)
+      [X]   Afficher le contenu du fichier avant de choisir quoi modifier (avant le 2eme menu)
+      []   Ajouter la possibilité de revenir à l'étape précédente en cas d'erreur
+
+  --> supprimer :
+      [X] Afficher la liste des fichiers existants
+
+  --> verifier : 
+      [X] si un mot est reconnu   -> fait (wordverif.py) mais à integré au code
+      [X] si un automate est complet  -> fait mais à améliorer
+      [X] si un automate est deterministe   ->fait mais à améliorer                  importcsv() problème chemin de fichier
+      [] si deux automates sont equivalents 
+
+--> Amelioration : 
+      [X] Rendre un automate complet
+      [X] Rendre un automate deterministe
+      [] Rendre un automate émondé
+      [] Rendre un automate minimal
+    
+reboucler le menu 
+
+
+rajouter en plus dans le code
+Réalisé les opérations suivantes :
+    [X] complement d'un AEF 
+    [X] miroir d'un AEF
+    [X] produit de deux AEF                           Soit un automate A et un automate B, et soit q1---a--->q2 et q1'--a--->q2' alors la concatenation donne q1q1'--a-->q2q2' 
+    [X] concatenation de deux AEF                     Soit un automate A et un automate B, les etats finaux de A deviennent états normaux et se relient à l'etat initial de B qui devient lui même                                                      un état normal
+
+
+Extraire une expression régulière 
+trouver le langage
